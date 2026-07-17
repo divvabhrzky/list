@@ -245,7 +245,14 @@
         .todo-text.line-through { text-decoration: line-through; color: var(--text-muted); font-weight: 500; }
         .meta-tag { font-size: 10px; display: inline-block; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: #334155; font-weight: 600; }
         .todo-remark { font-size: 11px; color: #b45309; font-weight: 500; }
-        .todo-time-info { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .todo-time-info { 
+    font-size: 10px; 
+    color: var(--text-muted); 
+    margin-top: 2px; 
+    display: flex; 
+    flex-direction: column; /* Membuat teks otomatis turun ke bawah */
+    gap: 2px;
+}
         
         .badge-overdue { background-color: var(--danger-light); color: var(--danger); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
         .badge-unsynced { background-color: var(--warning-light); color: var(--warning); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
