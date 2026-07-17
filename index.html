@@ -526,7 +526,7 @@
                 <div class="todo-content">
                     <span class="todo-text ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
                     ${todo.remark ? `<span class="todo-remark">${todo.remark}</span>` : ''}
-                    <div class="todo-time-info">Buat: ${todo.createdDateStr} | ${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</div>
+                    <div class="todo-time-info">Buat: ${todo.createdDateStr} <br> ${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                 </div>
                 <div class="action-btns">
