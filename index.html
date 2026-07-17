@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIPPS DASHBOARD MULTI-THEME</title>
+    <title>DIPPS DASHBOARD ULTIMATE CRUD</title>
     <style>
-        /* ==================== VARIABLE VARIANT TEMA ==================== */
         :root {
-            /* Light Mode (Bawaan) */
             --bg-color: #f4f6f9;
             --card-bg: #ffffff;
             --input-bg: #f8fafc;
@@ -22,34 +20,6 @@
             --warning: #d97706;
             --warning-light: #fef3c7;
             --border: #e2e8f0;
-            --shadow: rgba(0, 0, 0, 0.05);
-            --meta-bg: #e2e8f0;
-            --meta-text: #334155;
-            --list-item-hover: #f1f5f9;
-            --navbar-bg: #ffffff;
-        }
-
-        [data-theme="dark"] {
-            /* Dark Mode Premium */
-            --bg-color: #141419;
-            --card-bg: #1e1e24;
-            --input-bg: #25252e;
-            --text-color: #f5f5f7;
-            --text-muted: #a0a0ab;
-            --primary: #38bdf8;
-            --primary-light: rgba(56, 189, 248, 0.15);
-            --success: #22c55e;
-            --success-light: rgba(34, 197, 94, 0.15);
-            --danger: #ef4444;
-            --danger-light: rgba(239, 68, 68, 0.15);
-            --warning: #eab308;
-            --warning-light: rgba(234, 179, 8, 0.15);
-            --border: #2d2d38;
-            --shadow: rgba(0, 0, 0, 0.4);
-            --meta-bg: #2e2e38;
-            --meta-text: #38bdf8;
-            --list-item-hover: #22222b;
-            --navbar-bg: #1e1e24;
         }
 
         body {
@@ -60,17 +30,16 @@
             padding: 20px;
             box-sizing: border-box;
             min-height: 100vh;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.85);
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; font-weight: 700; color: var(--primary);
             font-size: 18px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
         }
 
         #network-status-badge {
@@ -85,7 +54,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px var(--shadow);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         .status-online { background-color: var(--success-light); color: var(--success); border: 1px solid rgba(22, 163, 74, 0.3); }
         .status-offline { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.3); animation: pulse 1.5s infinite; }
@@ -99,21 +68,20 @@
         .top-navbar {
             max-width: 1400px;
             margin: 0 auto 20px auto;
-            background: var(--navbar-bg);
+            background: var(--card-bg);
             padding: 12px 20px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px var(--shadow);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             border: 1px solid var(--border);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .tab-btn-group { display: flex; gap: 8px; }
 
         .tab-btn {
-            background-color: var(--input-bg);
+            background-color: #f1f5f9;
             color: var(--text-muted);
             border: 1px solid var(--border);
             padding: 10px 20px;
@@ -127,30 +95,6 @@
         .tab-btn.active {
             background-color: var(--primary);
             color: #ffffff;
-            border-color: var(--primary);
-        }
-
-        .right-nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .theme-toggle-btn {
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-        .theme-toggle-btn:hover {
             border-color: var(--primary);
         }
 
@@ -169,25 +113,25 @@
             background-color: var(--card-bg);
             padding: 24px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px var(--shadow);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             gap: 16px;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .left-column { display: flex; flex-direction: column; gap: 20px; }
         
-        h2 { margin: 0; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        h2 { margin: 0; font-size: 20px; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .date-header { color: var(--primary); font-weight: 600; font-size: 14px; margin-top: -8px; }
 
+        /* ==================== DESAIN PROGRESS BAR PREMIUM BARU ==================== */
         .progress-container {
-            background: var(--input-bg); 
+            background: #f8fafc; 
             padding: 16px; 
             border-radius: 12px; 
             border: 1px solid var(--border);
-            box-shadow: inset 0 1px 2px var(--shadow);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
         .progress-label { 
             display: flex; 
@@ -196,6 +140,7 @@
             font-size: 13px; 
             margin-bottom: 10px; 
             font-weight: 700; 
+            color: #334155; 
         }
         .progress-badge {
             background: var(--primary-light);
@@ -203,45 +148,45 @@
             padding: 3px 8px;
             border-radius: 6px;
             font-size: 12px;
-            font-weight: bold;
         }
         .progress-bar-bg { 
-            background: var(--bg-color); 
+            background: #e2e8f0; 
             height: 14px; 
             border-radius: 30px; 
             overflow: hidden; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
             position: relative;
         }
         .progress-bar-fill { 
-            background: linear-gradient(90deg, #10b981 0%, #0ea5e9 100%); 
-            background-size: 30px 30px;
-            background-image: linear-gradient(
-                45deg,
-                rgba(255, 255, 255, 0.15) 25%,
-                transparent 25%,
-                transparent 50%,
-                rgba(255, 255, 255, 0.15) 50%,
-                rgba(255, 255, 255, 0.15) 75%,
-                transparent 75%,
-                transparent
-            );
-            height: 100%; 
-            width: 0%; 
-            border-radius: 30px;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-            animation: progress-bar-stripes 1s linear infinite;
-        }
+    background-color: #10b981; /* Warna hijau solid dasar */
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 30px 30px;
+    height: 100%; 
+    width: 0%; 
+    border-radius: 30px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+    animation: progress-bar-stripes 1s linear infinite;
+}
 
         @keyframes progress-bar-stripes {
             0% { background-position: 0 0; }
             100% { background-position: 30px 0; }
         }
+        /* ========================================================================== */
 
         .input-group { display: flex; flex-direction: column; gap: 10px; }
         .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        label { font-size: 12px; font-weight: 600; margin-bottom: -6px; opacity: 0.9; }
+        label { font-size: 12px; font-weight: 600; color: #475569; margin-bottom: -6px; }
 
         input[type="text"], select, textarea, input[type="date"] {
             background-color: var(--input-bg);
@@ -253,7 +198,7 @@
             transition: all 0.2s ease;
         }
         input[type="text"]:focus, select:focus, textarea:focus, input[type="date"]:focus {
-            outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px var(--primary-light);
+            outline: none; border-color: var(--primary); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
         }
 
         .btn {
@@ -267,25 +212,24 @@
         .btn-success { background-color: #0ea5e9; color: white; }
         .btn-wa { background-color: #16a34a; color: white; }
         .btn-danger { background-color: var(--danger); color: white; }
-        .btn-secondary { background-color: var(--text-muted); color: var(--card-bg); font-size: 12px; padding: 6px 10px; border-radius: 4px; }
+        .btn-secondary { background-color: #64748b; color: white; font-size: 12px; padding: 6px 10px; border-radius: 4px; }
 
         .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .notepad-title { font-size: 14px; font-weight: 700; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+        .notepad-title { font-size: 14px; font-weight: 700; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; }
         textarea { height: 130px; resize: none; font-family: inherit; }
 
         .right-column { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-content: start; }
         
         .search-filter-box {
-            background-color: var(--input-bg); padding: 16px; border-radius: 8px;
+            background-color: #f8fafc; padding: 16px; border-radius: 8px;
             border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; grid-column: span 2;
         }
-        .search-filter-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+        .search-filter-title { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         .search-filter-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .search-filter-inputs-mor { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .search-filter-inputs input, .search-filter-inputs select, .search-filter-inputs-mor select, .search-filter-inputs-mor input { padding: 8px; font-size: 13px; }
 
-        .list-section { background: var(--card-bg); padding: 16px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; box-shadow: 0 1px 3px var(--shadow); }
-        .list-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        .list-section { background: var(--card-bg); padding: 16px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .list-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
         .list-section h3 { margin: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .title-active { color: var(--danger); }
@@ -293,19 +237,16 @@
         .title-history { color: var(--text-muted); }
 
         ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-        li { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; gap: 8px; transition: background 0.2s; }
-        li:hover { background: var(--list-item-hover); }
+        li { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; gap: 8px; transition: background 0.2s; }
+        li:hover { background: #f1f5f9; }
 
-        .todo-content { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-        .todo-text { font-size: 13px; font-weight: 600; word-break: break-all; }
+        .todo-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .todo-text { font-size: 13px; font-weight: 600; color: #0f172a; word-break: break-all; }
         .todo-text.line-through { text-decoration: line-through; color: var(--text-muted); font-weight: 500; }
-        .meta-tag { font-size: 10px; display: inline-block; background: var(--meta-bg); padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: var(--meta-text); font-weight: 600; }
-        .todo-remark { font-size: 11px; color: var(--warning); font-weight: 600; }
+        .meta-tag { font-size: 10px; display: inline-block; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: #334155; font-weight: 600; }
+        .todo-remark { font-size: 11px; color: #b45309; font-weight: 500; }
+        .todo-time-info { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
         
-        /* Modifikasi desain info waktu terpisah */
-        .todo-time-info { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
-        .time-row { display: block; line-height: 1.4; }
-
         .badge-overdue { background-color: var(--danger-light); color: var(--danger); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
         .badge-unsynced { background-color: var(--warning-light); color: var(--warning); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
 
@@ -315,13 +256,6 @@
         .edit-btn { background-color: var(--warning-light); color: var(--warning); border: 1px solid rgba(217, 119, 6, 0.2); }
         .delete-btn { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.2); }
         .empty-message { color: var(--text-muted); font-style: italic; font-size: 12px; margin: 2px 0; }
-
-        @media (max-width: 950px) {
-            .dashboard-layout { grid-template-columns: 1fr; }
-            .right-column { grid-template-columns: 1fr; }
-            .search-filter-box { grid-column: span 1; }
-            .search-filter-inputs, .search-filter-inputs-mor { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
@@ -334,10 +268,7 @@
         <button class="tab-btn active" onclick="switchTab('todo-panel', this)">📅 TO DO LIST</button>
         <button class="tab-btn" onclick="switchTab('mor-panel', this)">📋 DAFTAR MOR</button>
     </div>
-    <div class="right-nav-controls">
-        <button class="theme-toggle-btn" onclick="toggleTheme()">🌓 <span id="theme-text">Dark Mode</span></button>
-        <button class="btn btn-secondary" style="background:var(--primary); color:white;" onclick="fetchAllFromSheets()">🔄 Sinkronisasi</button>
-    </div>
+    <button class="btn btn-secondary" onclick="fetchAllFromSheets()">🔄 Sinkronisasi Data</button>
 </div>
 
 <!-- TAB 1: TO DO LIST -->
@@ -389,7 +320,7 @@
             <div class="list-section">
                 <div class="list-header-flex">
                     <h3 class="title-history">💾 Riwayat Lama: Selesai</h3>
-                    <button class="btn btn-secondary" style="padding: 2px 6px; background:#ef4444; color:white;" onclick="clearBulkHistory('todo')">🗑️ Bersihkan</button>
+                    <button class="btn btn-secondary" style="padding: 2px 6px; background:#ef4444;" onclick="clearBulkHistory('todo')">🗑️ Bersihkan</button>
                 </div>
                 <ul id="history-completed-list"></ul>
             </div>
@@ -422,8 +353,10 @@
                             <label>Unit Kerja</label>
                             <select id="mor-unit-input">
                                 <option value="HTC SODONG">HTC SODONG</option>
+                                <option value="HTC TAMANSARI">HTC TAMANSARI</option>
                                 <option value="HTC NEGLASARI">HTC NEGLASARI</option>
                                 <option value="HTC BOYOLALI">HTC BOYOLALI</option>
+                                <option value="FARM PANDEGLANG">FARM PANDEGLANG</option>
                                 <option value="FARM TAMANSARI FLOCK IMS">FARM TAMANSARI FLOCK IMS</option>
                                 <option value="FARM TAMANSARI FLOCK BIM">FARM TAMANSARI FLOCK BIM</option>
                                 <option value="FARM TAMANSARI FLOCK BERDIKARI">FARM TAMANSARI FLOCK BERDIKARI</option>
@@ -436,6 +369,7 @@
                             <select id="mor-type-input">
                                 <option value="GENERAL">GENERAL</option>
                                 <option value="OVK">OVK</option>
+                                <option value="PACKING">PACKING</option>
                                 <option value="PROJECT">PROJECT</option>
                                 <option value="SEKAM">SEKAM</option>
                             </select>
@@ -494,7 +428,7 @@
             <div class="list-section">
                 <div class="list-header-flex">
                     <h3 class="title-history">💾 MOR Riwayat Lama: Selesai</h3>
-                    <button class="btn btn-secondary" style="padding: 2px 6px; background:#ef4444; color:white;" onclick="clearBulkHistory('mor')">🗑️ Bersihkan</button>
+                    <button class="btn btn-secondary" style="padding: 2px 6px; background:#ef4444;" onclick="clearBulkHistory('mor')">🗑️ Bersihkan</button>
                 </div>
                 <ul id="mor-history-completed-list"></ul>
             </div>
@@ -508,21 +442,6 @@
     let todos = [];
     let mors = [];
     let isOfflineMode = false;
-
-    function initTheme() {
-        const savedTheme = localStorage.getItem('dipps_dashboard_theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        document.getElementById('theme-text').innerText = savedTheme === 'light' ? 'Dark Mode' : 'Light Mode';
-    }
-
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('dipps_dashboard_theme', newTheme);
-        document.getElementById('theme-text').innerText = newTheme === 'light' ? 'Dark Mode' : 'Light Mode';
-    }
 
     function showLoading(show) {
         document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
@@ -768,17 +687,12 @@
             const isOverdue = !todo.completed && (currentMs - (todo.timestamp || todo.id) > 86400000);
 
             const li = document.createElement('li');
-            
-            // PERUBAHAN UTAMA: Memisahkan teks "Buat" dan status "Selesai / Belum" ke baris berbeda menggunakan <div>
             li.innerHTML = `
                 <span class="status-icon" onclick="toggleTodoStatus(${todo.id})">${todo.completed ? '✅' : '❌'}</span>
                 <div class="todo-content">
                     <span class="todo-text ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
                     ${todo.remark ? `<span class="todo-remark">${todo.remark}</span>` : ''}
-                    <div class="todo-time-info">
-                        <span class="time-row">Buat: ${todo.createdDateStr}</span>
-                        <span class="time-row">${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</span>
-                    </div>
+                    <div class="todo-time-info">Buat: ${todo.createdDateStr} | ${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                     ${todo.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
@@ -807,7 +721,7 @@
         if(cCompletedHist===0) historyCompletedList.innerHTML = '<p class="empty-message">Kosong</p>';
     }
 
-    /* ==================== MOR CRUD ==================== */
+    /* ==================== MOR FUNCTIONS ==================== */
     function addMor() {
         const nameInput = document.getElementById('mor-name-input');
         const unitInput = document.getElementById('mor-unit-input');
@@ -882,6 +796,8 @@
         const queryRawDate = document.getElementById('mor-search-date').value;
         const queryDate = convertInputDateToAppFormat(queryRawDate);
 
+        let cActiveToday = 0, cCompletedToday = 0, cActiveHist = 0, cCompletedHist = 0;
+
         mors.forEach(mor => {
             if (queryName && !mor.text.includes(queryName)) return;
             if (queryUnit && mor.unit !== queryUnit) return;
@@ -892,21 +808,16 @@
             const isOverdue = !mor.completed && (currentMs - (mor.timestamp || mor.id) > 86400000);
 
             const li = document.createElement('li');
-            
-            // PERUBAHAN UTAMA: Memisahkan teks "Buat" dan status "Selesai / Belum" ke baris berbeda menggunakan <div>
             li.innerHTML = `
                 <span class="status-icon" onclick="toggleMorStatus(${mor.id})">${mor.completed ? '✅' : '❌'}</span>
                 <div class="todo-content">
                     <span class="todo-text ${mor.completed ? 'line-through' : ''}">${mor.text}</span>
                     <div style="margin-top:2px;">
-                        <span class="meta-tag" style="background:var(--primary-light); color:var(--primary);">${mor.type}</span>
+                        <span class="meta-tag" style="background:#e0f2fe; color:#0369a1;">${mor.type}</span>
                         <span class="meta-tag">${mor.unit}</span>
                     </div>
                     ${mor.remark ? `<span class="todo-remark">${mor.remark}</span>` : ''}
-                    <div class="todo-time-info">
-                        <span class="time-row">Buat: ${mor.createdDateStr}</span>
-                        <span class="time-row">${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</span>
-                    </div>
+                    <div class="todo-time-info">Buat: ${mor.createdDateStr} | ${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                     ${mor.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
@@ -955,7 +866,7 @@
             if (todayMors.length === 0) return "";
             
             res = `DAFTAR MOR DIPPS\n${todayStr}\n\n`;
-            mors.forEach(m => {
+            todayMors.forEach(m => {
                 const icon = m.completed ? '✅' : '❌';
                 const textWithRemark = (!m.completed && m.remark) ? `${m.text} ${m.remark}` : m.text;
                 res += `- ${textWithRemark} [${m.type}] ${icon}\n`;
@@ -981,7 +892,6 @@
     document.getElementById('todo-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addTodo(); });
     document.getElementById('mor-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addMor(); });
 
-    initTheme();
     initDates();
     updateNetworkStatus();
     fetchAllFromSheets();
