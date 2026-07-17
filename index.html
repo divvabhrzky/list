@@ -28,7 +28,7 @@
             min-height: 100vh;
         }
 
-        /* Loading Indicator */
+        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -256,7 +256,6 @@
                             <option value="HTC SODONG">HTC SODONG</option>
                             <option value="HTC NEGLASARI">HTC NEGLASARI</option>
                             <option value="HTC BOYOLALI">HTC BOYOLALI</option>
-                            <option value="HTC TAMANSARI">HTC TAMANSARI</option>
                             <option value="FARM TAMANSARI FLOCK IMS">FARM TAMANSARI FLOCK IMS</option>
                             <option value="FARM TAMANSARI FLOCK BIM">FARM TAMANSARI FLOCK BIM</option>
                             <option value="FARM TAMANSARI FLOCK BERDIKARI">FARM TAMANSARI FLOCK BERDIKARI</option>
@@ -266,7 +265,6 @@
                         <select id="mor-type-input">
                             <option value="GENERAL">GENERAL</option>
                             <option value="OVK">OVK</option>
-                             <option value="PACKING">PACKING</option>
                             <option value="PROJECT">PROJECT</option>
                             <option value="SEKAM">SEKAM</option>
                         </select>
@@ -312,8 +310,8 @@
 </div>
 
 <script>
-    // URL Web App Google Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbxp7kiU6TJuJjLjfdaEAjTPDAzaK_Sc8xDIzcto4qGTnU-IDRjWuDZ1Pl_ZVJaLcsJosQ/exec";
+    // URL Web App Google Apps Script milikmu yang baru
+    const API_URL = "https://script.google.com/macros/s/AKfycbxELSc4AHZqTJHvVCysXeFP8eJx0SXWB6uI63ryGI9BhfaQeFPSWlOaDxXaIhMxUTCxWA/exec";
 
     let todos = [];
     let mors = [];
@@ -349,9 +347,8 @@
         btn.classList.add('active');
     }
 
-    // ==================== DATABASE ENGINE: SINKRONISASI GOOGLE SHEETS ====================
+    // ==================== DATABASE CLOUD ENGINE ====================
     
-    // 1. Ambil Semua Data saat Web Pertama Kali Dibuka
     function fetchAllFromSheets() {
         showLoading(true);
         fetch(API_URL)
@@ -360,11 +357,9 @@
                 const fetchedList = data.todos || [];
                 const fetchedNotepads = data.notepads || {};
 
-                // Pisahkan data tugas ke masing-masing array berdasarkan type
                 todos = fetchedList.filter(item => item.type === "TODO");
                 mors = fetchedList.filter(item => item.type !== "TODO" && item.type !== "notepad");
 
-                // Render teks notepad ke layar
                 document.getElementById('general-notepad').value = fetchedNotepads['todo'] || '';
                 document.getElementById('mor-notepad').value = fetchedNotepads['mor'] || '';
 
@@ -378,7 +373,6 @@
             });
     }
 
-    // 2. Fungsi Kirim/Update Data Transaksi Massal
     function syncAllToSheets() {
         showLoading(true);
         const combinedList = [...todos, ...mors];
@@ -400,7 +394,6 @@
         });
     }
 
-    // 3. Simpan Teks Notepad Ke Google Sheets (Triggered on Blur / Kursor Keluar)
     function saveNotepad(type) {
         const textValue = type === 'todo' 
             ? document.getElementById('general-notepad').value 
@@ -415,7 +408,7 @@
             })
         })
         .then(res => res.json())
-        .then(result => console.log(`Notepad ${type} tersinkronisasi ke Google Sheet!`));
+        .then(result => console.log(`Notepad ${type} tersinkronisasi!`));
     }
 
     function clearFilter(type) {
@@ -431,7 +424,7 @@
     }
 
     function clearBulkHistory(type) {
-        if(!confirm("Hapus seluruh riwayat lama yang SUDAH SELESAI dari cloud Google Sheets?")) return;
+        if(!confirm("Hapus seluruh riwayat lama yang SUDAH SELESAI?")) return;
         const todayStr = getFormattedDate(new Date());
         if(type === 'todo') {
             todos = todos.filter(t => !(t.createdDateStr !== todayStr && t.completed));
@@ -479,7 +472,7 @@
     }
 
     function deleteTodo(id) {
-        if(confirm("Hapus tugas ini dari cloud?")) {
+        if(confirm("Hapus tugas ini?")) {
             todos = todos.filter(t => t.id !== id);
             renderTodos();
             syncAllToSheets();
@@ -593,7 +586,7 @@
     }
 
     function deleteMor(id) {
-        if(confirm("Hapus data MOR dari cloud?")) {
+        if(confirm("Hapus data MOR?")) {
             mors = mors.filter(m => m.id !== id);
             renderMors();
             syncAllToSheets();
@@ -672,20 +665,33 @@
         if(cCompletedHist===0) historyCompletedList.innerHTML = '<p class="empty-message">Kosong</p>';
     }
 
-    /* ==================== SHARING GENERATOR ==================== */
+    /* ==================== FORMAT SHARING DINAMIS ==================== */
     function buildTextString(type) {
         const todayStr = getFormattedDate(new Date());
         let res = "";
+        
         if (type === 'todo') {
             const todayTodos = todos.filter(t => t.createdDateStr === todayStr);
             if (todayTodos.length === 0) return "";
+            
             res = `TO DO LIST DIPPS\n${todayStr}\n\n`;
-            todayTodos.forEach(t => res += `- ${t.text} ${t.completed ? '✅' : '❌'}\n`);
+            todayTodos.forEach(t => {
+                const icon = t.completed ? '✅' : '❌';
+                // FILTRASI: Jika belum selesai, ikut sertakan remark. Jika sudah selesai, remark dibuang.
+                const textWithRemark = (!t.completed && t.remark) ? `${t.text} ${t.remark}` : t.text;
+                res += `- ${textWithRemark} ${icon}\n`;
+            });
         } else {
             const todayMors = mors.filter(m => m.createdDateStr === todayStr);
             if (todayMors.length === 0) return "";
+            
             res = `DAFTAR MOR DIPPS\n${todayStr}\n\n`;
-            todayMors.forEach(m => res += `- ${m.text} [${m.type}] ${m.completed ? '✅' : '❌'}\n`);
+            todayMors.forEach(m => {
+                const icon = m.completed ? '✅' : '❌';
+                // FILTRASI: Jika belum selesai, ikut sertakan remark. Jika sudah selesai, remark dibuang.
+                const textWithRemark = (!m.completed && m.remark) ? `${m.text} ${m.remark}` : m.text;
+                res += `- ${textWithRemark} [${m.type}] ${icon}\n`;
+            });
         }
         return res.trim();
     }
@@ -707,7 +713,6 @@
     document.getElementById('todo-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addTodo(); });
     document.getElementById('mor-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addMor(); });
 
-    // Mulai Ambil Database dari Google Sheets di Awal Load
     initDates();
     fetchAllFromSheets();
 </script>
