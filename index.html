@@ -699,7 +699,10 @@
                 <div class="todo-content">
                     <span class="todo-text ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
                     ${todo.remark ? `<span class="todo-remark">${todo.remark}</span>` : ''}
-                    <div class="todo-time-info">Buat: ${todo.createdDateStr} | ${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</div>
+                   <div class="todo-time-info">
+    <span>Buat: ${todo.createdDateStr}</span>
+    <span>${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</span>
+</div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                     ${todo.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
@@ -824,7 +827,10 @@
                         <span class="meta-tag">${mor.unit}</span>
                     </div>
                     ${mor.remark ? `<span class="todo-remark">${mor.remark}</span>` : ''}
-                    <div class="todo-time-info">Buat: ${mor.createdDateStr} | ${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</div>
+                   <div class="todo-time-info">
+    <span>Buat: ${mor.createdDateStr}</span>
+    <span>${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</span>
+</div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                     ${mor.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
