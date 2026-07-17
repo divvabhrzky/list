@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIPPS DASHBOARD GOOGLE SHEETS</title>
+    <style>
+        :root {
+            --bg-color: #141419;
+            --card-bg: #1e1e24;
+            --input-bg: #25252e;
+            --text-color: #f5f5f7;
+            --text-muted: #a0a0ab;
+            --primary: #38bdf8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --border: #2d2d38;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 30px 30px 30px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        /* Loading Indicator */
+        #loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(20, 20, 25, 0.8);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; font-weight: 700; color: var(--primary);
+            font-size: 18px;
+        }
+
+        .navigation-tabs {
+            display: flex;
+            gap: 10px;
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 12px 25px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .left-column { display: flex; flex-direction: column; gap: 25px; }
+        h2 { margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 700; }
+        .date-header { color: var(--primary); font-weight: 600; font-size: 16px; margin-top: -12px; }
+
+        .progress-container {
+            background: #16161a; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border);
+        }
+        .progress-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; font-weight: 600; }
+        .progress-bar-bg { background: #2d2d38; height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-bar-fill { background: var(--success); height: 100%; width: 0%; transition: width 0.4s ease; }
+
+        .input-group { display: flex; flex-direction: column; gap: 12px; }
+        .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        input[type="text"], select, textarea, input[type="date"] {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        input[type="text"]:focus, select:focus, textarea:focus, input[type="date"]:focus {
+            outline: none; border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 14px 20px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 14px; font-weight: 600;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary { background-color: var(--primary); color: #0f172a; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-wa { background-color: #25d366; color: white; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-secondary { background-color: #4b5563; color: white; font-size: 12px; padding: 8px 12px; }
+
+        .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .notepad-title { font-size: 16px; font-weight: 600; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        textarea { height: 160px; resize: none; font-family: inherit; }
+
+        .right-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-content: start; }
+        
+        .search-filter-box {
+            background-color: #1a1a20; padding: 15px; border-radius: 12px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; grid-column: span 2;
+        }
+        .search-filter-title { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .search-filter-inputs { display: flex; gap: 10px; }
+        .search-filter-inputs input { flex: 1; padding: 10px; }
+
+        .list-section { background: #22222b; padding: 20px; border-radius: 12px; border: 1px solid var(--border); min-height: 180px; }
+        .list-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .list-section h3 { margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .title-active { color: var(--danger); }
+        .title-completed { color: var(--success); }
+        .title-history { color: var(--text-muted); }
+
+        ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        li { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; gap: 10px; }
+
+        .todo-content { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+        .todo-text { font-size: 14px; font-weight: 600; word-break: break-all; }
+        .todo-text.line-through { text-decoration: line-through; color: var(--text-muted); }
+        .meta-tag { font-size: 11px; display: inline-block; background: #2e2e38; padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: var(--primary); }
+        .todo-remark { font-size: 12px; color: var(--text-muted); font-style: italic; }
+        .todo-time-info { font-size: 10px; color: #636370; margin-top: 2px; display: flex; flex-direction: column; }
+        .badge-overdue { background-color: var(--danger); color: white; font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; text-transform: uppercase; }
+
+        .status-icon { cursor: pointer; font-size: 18px; user-select: none; margin-top: -2px; }
+        .action-btns { display: flex; flex-direction: column; gap: 4px; }
+        .action-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
+        .edit-btn { background-color: var(--warning); color: #000; }
+        .delete-btn { background-color: var(--danger); color: white; }
+        .empty-message { color: var(--text-muted); font-style: italic; font-size: 13px; margin: 5px 0; }
+
+        @media (max-width: 950px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+            .right-column { grid-template-columns: 1fr; }
+            .search-filter-box { grid-column: span 1; }
+            .search-filter-inputs { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-overlay">⏳ Menghubungkan ke Google Sheets API...</div>
+
+<div class="navigation-tabs">
+    <button class="tab-btn active" onclick="switchTab('todo-panel', this)">📅 TO DO LIST</button>
+    <button class="tab-btn" onclick="switchTab('mor-panel', this)">📋 DAFTAR MOR</button>
+</div>
+
+<!-- ==================== TAB 1: TO DO LIST ==================== -->
+<div id="todo-panel" class="tab-content active">
+    <div class="dashboard-layout">
+        <div class="left-column">
+            <div class="card">
+                <h2>TO DO LIST DIPPS</h2>
+                <div class="date-header class-date-display">-- - -- - ----</div>
+                
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress Hari Ini</span><span id="todo-progress-text">0% (0/0)</span></div>
+                    <div class="progress-bar-bg"><div id="todo-progress-bar" class="progress-bar-fill"></div></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="todo-input" placeholder="Nama Kegiatan...">
+                    <input type="text" id="todo-remark-input" placeholder="Remark / Review (Opsional)...">
+                    <button class="btn btn-primary" onclick="addTodo()">Tambah Tugas</button>
+                </div>
+
+                <div class="share-row">
+                    <button class="btn btn-success" onclick="copyToClipboard('todo')">📋 Salin Format</button>
+                    <button class="btn btn-wa" onclick="sendToWhatsApp('todo')">💬 Kirim ke WA</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="notepad-title">📝 Notepad Umum (Todo)</div>
+                <textarea id="general-notepad" onblur="saveNotepad('todo')" placeholder="Tulis catatan penting... Catatan otomatis tersinkronisasi saat memindahkan kursor keluar kotak."></textarea>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="search-filter-box">
+                <div class="search-filter-title">🔍 Cari & Filter Riwayat (Todo)</div>
+                <div class="search-filter-inputs">
+                    <input type="text" id="todo-search-name" oninput="renderTodos()" placeholder="Cari nama tugas...">
+                    <input type="date" id="todo-search-date" onchange="renderTodos()">
+                    <button class="action-btn delete-btn" style="padding:0 10px;" onclick="clearFilter('todo')">Reset</button>
+                </div>
+            </div>
+
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-active">❌ Hari Ini: Belum</h3></div><ul id="active-list"></ul></div>
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-completed">✅ Hari Ini: Selesai</h3></div><ul id="completed-list"></ul></div>
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-history">⏳ Riwayat: Belum Selesai</h3></div><ul id="history-active-list"></ul></div>
+            <div class="list-section">
+                <div class="list-header-flex">
+                    <h3 class="title-history">💾 Riwayat: Sudah Selesai</h3>
+                    <button class="btn btn-secondary" style="padding: 3px 8px; background:#ef4444;" onclick="clearBulkHistory('todo')">🗑️ Bersihkan</button>
+                </div>
+                <ul id="history-completed-list"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TAB 2: DAFTAR MOR ==================== -->
+<div id="mor-panel" class="tab-content">
+    <div class="dashboard-layout">
+        <div class="left-column">
+            <div class="card">
+                <h2>DAFTAR MOR DIPPS</h2>
+                <div class="date-header class-date-display">-- - -- - ----</div>
+
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress MOR Hari Ini</span><span id="mor-progress-text">0% (0/0)</span></div>
+                    <div class="progress-bar-bg"><div id="mor-progress-bar" class="progress-bar-fill"></div></div>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="mor-name-input" placeholder="Nama MOR...">
+                    <div class="select-row">
+                        <select id="mor-unit-input">
+                            <option value="HTC SODONG">HTC SODONG</option>
+                            <option value="HTC NEGLASARI">HTC NEGLASARI</option>
+                            <option value="HTC BOYOLALI">HTC BOYOLALI</option>
+                            <option value="HTC TAMANSARI">HTC TAMANSARI</option>
+                            <option value="FARM TAMANSARI FLOCK IMS">FARM TAMANSARI FLOCK IMS</option>
+                            <option value="FARM TAMANSARI FLOCK BIM">FARM TAMANSARI FLOCK BIM</option>
+                            <option value="FARM TAMANSARI FLOCK BERDIKARI">FARM TAMANSARI FLOCK BERDIKARI</option>
+                            <option value="FARM CARENANG">FARM CARENANG</option>
+                            <option value="FARM LEUWIDAMAR">FARM LEUWIDAMAR</option>
+                        </select>
+                        <select id="mor-type-input">
+                            <option value="GENERAL">GENERAL</option>
+                            <option value="OVK">OVK</option>
+                             <option value="PACKING">PACKING</option>
+                            <option value="PROJECT">PROJECT</option>
+                            <option value="SEKAM">SEKAM</option>
+                        </select>
+                    </div>
+                    <input type="text" id="mor-remark-input" placeholder="Remark / Review (Opsional)...">
+                    <button class="btn btn-primary" onclick="addMor()">Tambah Data MOR</button>
+                </div>
+
+                <div class="share-row">
+                    <button class="btn btn-success" onclick="copyToClipboard('mor')">📋 Salin Format</button>
+                    <button class="btn btn-wa" onclick="sendToWhatsApp('mor')">💬 Kirim ke WA</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="notepad-title">📝 Notepad Khusus MOR</div>
+                <textarea id="mor-notepad" onblur="saveNotepad('mor')" placeholder="Tulis catatan khusus MOR di sini... Catatan otomatis tersinkronisasi saat memindahkan kursor keluar kotak."></textarea>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="search-filter-box">
+                <div class="search-filter-title">🔍 Cari & Filter Riwayat (MOR)</div>
+                <div class="search-filter-inputs">
+                    <input type="text" id="mor-search-name" oninput="renderMors()" placeholder="Cari nama MOR...">
+                    <input type="date" id="mor-search-date" onchange="renderMors()">
+                    <button class="action-btn delete-btn" style="padding:0 10px;" onclick="clearFilter('mor')">Reset</button>
+                </div>
+            </div>
+
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-active">❌ MOR Hari Ini: Belum</h3></div><ul id="mor-active-list"></ul></div>
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-completed">✅ MOR Hari Ini: Selesai</h3></div><ul id="mor-completed-list"></ul></div>
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-history">⏳ MOR Riwayat: Belum</h3></div><ul id="mor-history-active-list"></ul></div>
+            <div class="list-section">
+                <div class="list-header-flex">
+                    <h3 class="title-history">💾 MOR Riwayat: Selesai</h3>
+                    <button class="btn btn-secondary" style="padding: 3px 8px; background:#ef4444;" onclick="clearBulkHistory('mor')">🗑️ Bersihkan</button>
+                </div>
+                <ul id="mor-history-completed-list"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // URL Web App Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbxp7kiU6TJuJjLjfdaEAjTPDAzaK_Sc8xDIzcto4qGTnU-IDRjWuDZ1Pl_ZVJaLcsJosQ/exec";
+
+    let todos = [];
+    let mors = [];
+
+    function showLoading(show) {
+        document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function getFormattedDate(dateObj) {
+        return `${dateObj.getDate()} - ${dateObj.getMonth() + 1} - ${dateObj.getFullYear()}`;
+    }
+
+    function getFormattedTime(dateObj) {
+        return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+    }
+
+    function convertInputDateToAppFormat(dateVal) {
+        if(!dateVal) return "";
+        const parts = dateVal.split('-');
+        return `${parseInt(parts[2])} - ${parseInt(parts[1])} - ${parts[0]}`;
+    }
+
+    function initDates() {
+        const todayStr = getFormattedDate(new Date());
+        document.querySelectorAll('.class-date-display').forEach(el => el.innerText = todayStr);
+        return todayStr;
+    }
+
+    function switchTab(panelId, btn) {
+        document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(panelId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // ==================== DATABASE ENGINE: SINKRONISASI GOOGLE SHEETS ====================
+    
+    // 1. Ambil Semua Data saat Web Pertama Kali Dibuka
+    function fetchAllFromSheets() {
+        showLoading(true);
+        fetch(API_URL)
+            .then(response => response.json())
+            .then(data => {
+                const fetchedList = data.todos || [];
+                const fetchedNotepads = data.notepads || {};
+
+                // Pisahkan data tugas ke masing-masing array berdasarkan type
+                todos = fetchedList.filter(item => item.type === "TODO");
+                mors = fetchedList.filter(item => item.type !== "TODO" && item.type !== "notepad");
+
+                // Render teks notepad ke layar
+                document.getElementById('general-notepad').value = fetchedNotepads['todo'] || '';
+                document.getElementById('mor-notepad').value = fetchedNotepads['mor'] || '';
+
+                renderTodos();
+                renderMors();
+                showLoading(false);
+            })
+            .catch(err => {
+                alert("Gagal memuat database Google Sheets!");
+                showLoading(false);
+            });
+    }
+
+    // 2. Fungsi Kirim/Update Data Transaksi Massal
+    function syncAllToSheets() {
+        showLoading(true);
+        const combinedList = [...todos, ...mors];
+        
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: "syncAll",
+                listData: combinedList
+            })
+        })
+        .then(res => res.json())
+        .then(result => {
+            showLoading(false);
+        })
+        .catch(err => {
+            alert("Gagal sinkronisasi data ke cloud.");
+            showLoading(false);
+        });
+    }
+
+    // 3. Simpan Teks Notepad Ke Google Sheets (Triggered on Blur / Kursor Keluar)
+    function saveNotepad(type) {
+        const textValue = type === 'todo' 
+            ? document.getElementById('general-notepad').value 
+            : document.getElementById('mor-notepad').value;
+            
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: "saveNotepad",
+                type: type,
+                text: textValue
+            })
+        })
+        .then(res => res.json())
+        .then(result => console.log(`Notepad ${type} tersinkronisasi ke Google Sheet!`));
+    }
+
+    function clearFilter(type) {
+        if (type === 'todo') {
+            document.getElementById('todo-search-name').value = '';
+            document.getElementById('todo-search-date').value = '';
+            renderTodos();
+        } else {
+            document.getElementById('mor-search-name').value = '';
+            document.getElementById('mor-search-date').value = '';
+            renderMors();
+        }
+    }
+
+    function clearBulkHistory(type) {
+        if(!confirm("Hapus seluruh riwayat lama yang SUDAH SELESAI dari cloud Google Sheets?")) return;
+        const todayStr = getFormattedDate(new Date());
+        if(type === 'todo') {
+            todos = todos.filter(t => !(t.createdDateStr !== todayStr && t.completed));
+            renderTodos();
+        } else {
+            mors = mors.filter(m => !(m.createdDateStr !== todayStr && m.completed));
+            renderMors();
+        }
+        syncAllToSheets();
+    }
+
+    /* ==================== HANDLER MENU 1: TODO ==================== */
+    function addTodo() {
+        const input = document.getElementById('todo-input');
+        const remarkInput = document.getElementById('todo-remark-input');
+        if (input.value.trim() === '') return alert('Isi nama kegiatan!');
+        
+        const now = new Date();
+        todos.push({
+            id: Date.now(),
+            text: input.value.trim().toUpperCase(),
+            remark: remarkInput.value.trim() ? `(${remarkInput.value.trim().toUpperCase()})` : '',
+            completed: false,
+            createdDateStr: getFormattedDate(now),
+            createdTimeStr: getFormattedTime(now),
+            completedTimeStr: '',
+            timestamp: now.getTime(),
+            type: 'TODO'
+        });
+        input.value = ''; remarkInput.value = '';
+        renderTodos();
+        syncAllToSheets();
+    }
+
+    function toggleTodoStatus(id) {
+        todos = todos.map(t => {
+            if (t.id === id) {
+                const now = new Date();
+                return { ...t, completed: !t.completed, completedTimeStr: !t.completed ? `${getFormattedDate(now)} (${getFormattedTime(now)})` : '' };
+            }
+            return t;
+        });
+        renderTodos();
+        syncAllToSheets();
+    }
+
+    function deleteTodo(id) {
+        if(confirm("Hapus tugas ini dari cloud?")) {
+            todos = todos.filter(t => t.id !== id);
+            renderTodos();
+            syncAllToSheets();
+        }
+    }
+
+    function editTodo(id) {
+        const item = todos.find(t => t.id === id);
+        const nText = prompt("Edit Kegiatan:", item.text);
+        if (!nText || nText.trim() === '') return;
+        const nRemark = prompt("Edit Remark:", item.remark.replace(/[()]/g, ''));
+        
+        todos = todos.map(t => t.id === id ? { ...t, text: nText.trim().toUpperCase(), remark: nRemark.trim() ? `(${nRemark.trim().toUpperCase()})` : '' } : t);
+        renderTodos();
+        syncAllToSheets();
+    }
+
+    function renderTodos() {
+        const activeList = document.getElementById('active-list');
+        const completedList = document.getElementById('completed-list');
+        const historyActiveList = document.getElementById('history-active-list');
+        const historyCompletedList = document.getElementById('history-completed-list');
+        
+        activeList.innerHTML = ''; completedList.innerHTML = ''; historyActiveList.innerHTML = ''; historyCompletedList.innerHTML = '';
+        const todayStr = getFormattedDate(new Date());
+        const currentMs = Date.now();
+
+        const queryName = document.getElementById('todo-search-name').value.trim().toUpperCase();
+        const queryRawDate = document.getElementById('todo-search-date').value;
+        const queryDate = convertInputDateToAppFormat(queryRawDate);
+
+        let cActiveToday = 0, cCompletedToday = 0, cActiveHist = 0, cCompletedHist = 0;
+
+        todos.forEach(todo => {
+            if (queryName && !todo.text.includes(queryName)) return;
+            if (queryDate && todo.createdDateStr !== queryDate) return;
+
+            const isToday = todo.createdDateStr === todayStr;
+            const isOverdue = !todo.completed && (currentMs - (todo.timestamp || todo.id) > 86400000);
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="status-icon" onclick="toggleTodoStatus(${todo.id})">${todo.completed ? '✅' : '❌'}</span>
+                <div class="todo-content">
+                    <span class="todo-text ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
+                    ${todo.remark ? `<span class="todo-remark">${todo.remark}</span>` : ''}
+                    <div class="todo-time-info">Buat: ${todo.createdDateStr} | ${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</div>
+                    ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn edit-btn" onclick="editTodo(${todo.id})">📝</button>
+                    <button class="action-btn delete-btn" onclick="deleteTodo(${todo.id})">🗑️</button>
+                </div>
+            `;
+            if(isToday) {
+                if(!todo.completed) { activeList.appendChild(li); cActiveToday++; }
+                else { completedList.appendChild(li); cCompletedToday++; }
+            } else {
+                if(!todo.completed) { historyActiveList.appendChild(li); cActiveHist++; }
+                else { historyCompletedList.appendChild(li); cCompletedHist++; }
+            }
+        });
+
+        const totalToday = cActiveToday + cCompletedToday;
+        const percent = totalToday > 0 ? Math.round((cCompletedToday / totalToday) * 100) : 0;
+        document.getElementById('todo-progress-bar').style.width = percent + '%';
+        document.getElementById('todo-progress-text').innerText = `${percent}% (${cCompletedToday}/${totalToday})`;
+
+        if(cActiveToday===0) activeList.innerHTML = '<p class="empty-message">Kosong</p>';
+        if(cCompletedToday===0) completedList.innerHTML = '<p class="empty-message">Kosong</p>';
+        if(cActiveHist===0) historyActiveList.innerHTML = '<p class="empty-message">Kosong</p>';
+        if(cCompletedHist===0) historyCompletedList.innerHTML = '<p class="empty-message">Kosong</p>';
+    }
+
+    /* ==================== HANDLER MENU 2: MOR ==================== */
+    function addMor() {
+        const nameInput = document.getElementById('mor-name-input');
+        const unitInput = document.getElementById('mor-unit-input');
+        const typeInput = document.getElementById('mor-type-input');
+        const remarkInput = document.getElementById('mor-remark-input');
+        if (nameInput.value.trim() === '') return alert('Isi nama MOR!');
+        
+        const now = new Date();
+        mors.push({
+            id: Date.now(),
+            text: nameInput.value.trim().toUpperCase(),
+            unit: unitInput.value,
+            type: typeInput.value,
+            remark: remarkInput.value.trim() ? `(${remarkInput.value.trim().toUpperCase()})` : '',
+            completed: false,
+            createdDateStr: getFormattedDate(now),
+            createdTimeStr: getFormattedTime(now),
+            completedTimeStr: '',
+            timestamp: now.getTime()
+        });
+        nameInput.value = ''; remarkInput.value = '';
+        renderMors();
+        syncAllToSheets();
+    }
+
+    function toggleMorStatus(id) {
+        mors = mors.map(m => {
+            if (m.id === id) {
+                const now = new Date();
+                return { ...m, completed: !m.completed, completedTimeStr: !m.completed ? `${getFormattedDate(now)} (${getFormattedTime(now)})` : '' };
+            }
+            return m;
+        });
+        renderMors();
+        syncAllToSheets();
+    }
+
+    function deleteMor(id) {
+        if(confirm("Hapus data MOR dari cloud?")) {
+            mors = mors.filter(m => m.id !== id);
+            renderMors();
+            syncAllToSheets();
+        }
+    }
+
+    function editMor(id) {
+        const item = mors.find(m => m.id === id);
+        const nText = prompt("Edit Nama MOR:", item.text);
+        if (!nText || nText.trim() === '') return;
+        const nRemark = prompt("Edit Remark:", item.remark.replace(/[()]/g, ''));
+        
+        mors = mors.map(m => m.id === id ? { ...m, text: nText.trim().toUpperCase(), remark: nRemark.trim() ? `(${nRemark.trim().toUpperCase()})` : '' } : m);
+        renderMors();
+        syncAllToSheets();
+    }
+
+    function renderMors() {
+        const activeList = document.getElementById('mor-active-list');
+        const completedList = document.getElementById('mor-completed-list');
+        const historyActiveList = document.getElementById('mor-history-active-list');
+        const historyCompletedList = document.getElementById('mor-history-completed-list');
+        
+        activeList.innerHTML = ''; completedList.innerHTML = ''; historyActiveList.innerHTML = ''; historyCompletedList.innerHTML = '';
+        const todayStr = getFormattedDate(new Date());
+        const currentMs = Date.now();
+
+        const queryName = document.getElementById('mor-search-name').value.trim().toUpperCase();
+        const queryRawDate = document.getElementById('mor-search-date').value;
+        const queryDate = convertInputDateToAppFormat(queryRawDate);
+
+        let cActiveToday = 0, cCompletedToday = 0, cActiveHist = 0, cCompletedHist = 0;
+
+        mors.forEach(mor => {
+            if (queryName && !mor.text.includes(queryName)) return;
+            if (queryDate && mor.createdDateStr !== queryDate) return;
+
+            const isToday = mor.createdDateStr === todayStr;
+            const isOverdue = !mor.completed && (currentMs - (mor.timestamp || mor.id) > 86400000);
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="status-icon" onclick="toggleMorStatus(${mor.id})">${mor.completed ? '✅' : '❌'}</span>
+                <div class="todo-content">
+                    <span class="todo-text ${mor.completed ? 'line-through' : ''}">${mor.text}</span>
+                    <div>
+                        <span class="meta-tag">${mor.type}</span>
+                        <span class="meta-tag" style="color:var(--text-muted); background:#27272a;">${mor.unit}</span>
+                    </div>
+                    ${mor.remark ? `<span class="todo-remark">${mor.remark}</span>` : ''}
+                    <div class="todo-time-info">Buat: ${mor.createdDateStr} | ${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</div>
+                    ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn edit-btn" onclick="editMor(${mor.id})">📝</button>
+                    <button class="action-btn delete-btn" onclick="deleteMor(${mor.id})">🗑️</button>
+                </div>
+            `;
+            if(isToday) {
+                if(!mor.completed) { activeList.appendChild(li); cActiveToday++; }
+                else { completedList.appendChild(li); cCompletedToday++; }
+            } else {
+                if(!mor.completed) { historyActiveList.appendChild(li); cActiveHist++; }
+                else { historyCompletedList.appendChild(li); cCompletedHist++; }
+            }
+        });
+
+        const totalToday = cActiveToday + cCompletedToday;
+        const percent = totalToday > 0 ? Math.round((cCompletedToday / totalToday) * 100) : 0;
+        document.getElementById('mor-progress-bar').style.width = percent + '%';
+        document.getElementById('mor-progress-text').innerText = `${percent}% (${cCompletedToday}/${totalToday})`;
+
+        if(cActiveToday===0) activeList.innerHTML = '<p class="empty-message">Kosong</p>';
+        if(cCompletedToday===0) completedList.innerHTML = '<p class="empty-message">Kosong</p>';
+        if(cActiveHist===0) historyActiveList.innerHTML = '<p class="empty-message">Kosong</p>';
+        if(cCompletedHist===0) historyCompletedList.innerHTML = '<p class="empty-message">Kosong</p>';
+    }
+
+    /* ==================== SHARING GENERATOR ==================== */
+    function buildTextString(type) {
+        const todayStr = getFormattedDate(new Date());
+        let res = "";
+        if (type === 'todo') {
+            const todayTodos = todos.filter(t => t.createdDateStr === todayStr);
+            if (todayTodos.length === 0) return "";
+            res = `TO DO LIST DIPPS\n${todayStr}\n\n`;
+            todayTodos.forEach(t => res += `- ${t.text} ${t.completed ? '✅' : '❌'}\n`);
+        } else {
+            const todayMors = mors.filter(m => m.createdDateStr === todayStr);
+            if (todayMors.length === 0) return "";
+            res = `DAFTAR MOR DIPPS\n${todayStr}\n\n`;
+            todayMors.forEach(m => res += `- ${m.text} [${m.type}] ${m.completed ? '✅' : '❌'}\n`);
+        }
+        return res.trim();
+    }
+
+    function copyToClipboard(type) {
+        const text = buildTextString(type);
+        if(!text) return alert('Daftar hari ini masih kosong!');
+        navigator.clipboard.writeText(text).then(() => alert('Format teks hari ini disalin!'));
+    }
+
+    function sendToWhatsApp(type) {
+        const text = buildTextString(type);
+        if(!text) return alert('Tidak ada teks report hari ini untuk dikirim.');
+        const encodedText = encodeURIComponent(text);
+        const urlWA = `https://api.whatsapp.com/send?text=${encodedText}`;
+        window.open(urlWA, '_blank');
+    }
+
+    document.getElementById('todo-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addTodo(); });
+    document.getElementById('mor-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addMor(); });
+
+    // Mulai Ambil Database dari Google Sheets di Awal Load
+    initDates();
+    fetchAllFromSheets();
+</script>
+
+</body>
+</html>
