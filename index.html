@@ -3,19 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIPPS DASHBOARD GOOGLE SHEETS</title>
+    <title>DIPPS DASHBOARD MULTI-THEME</title>
     <style>
+        /* ==================== VARIABLE VARIANT TEMA ==================== */
         :root {
+            /* Light Mode (Bawaan) */
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --input-bg: #f8fafc;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --primary: #0284c7;
+            --primary-light: #e0f2fe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --meta-bg: #e2e8f0;
+            --meta-text: #334155;
+            --list-item-hover: #f1f5f9;
+            --navbar-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Premium */
             --bg-color: #141419;
             --card-bg: #1e1e24;
             --input-bg: #25252e;
             --text-color: #f5f5f7;
             --text-muted: #a0a0ab;
             --primary: #38bdf8;
+            --primary-light: rgba(56, 189, 248, 0.15);
             --success: #22c55e;
+            --success-light: rgba(34, 197, 94, 0.15);
             --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.15);
             --warning: #eab308;
+            --warning-light: rgba(234, 179, 8, 0.15);
             --border: #2d2d38;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --meta-bg: #2e2e38;
+            --meta-text: #38bdf8;
+            --list-item-hover: #22222b;
+            --navbar-bg: #1e1e24;
         }
 
         body {
@@ -23,45 +57,100 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px 30px 30px 30px;
+            padding: 20px;
             box-sizing: border-box;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(20, 20, 25, 0.8);
+            background: var(--bg-color);
+            opacity: 0.9;
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; font-weight: 700; color: var(--primary);
             font-size: 18px;
         }
 
-        .navigation-tabs {
+        #network-status-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 9998;
             display: flex;
-            gap: 10px;
-            max-width: 1400px;
-            margin: 0 auto 20px auto;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 10px;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        .status-online { background-color: var(--success-light); color: var(--success); border: 1px solid rgba(22, 163, 74, 0.3); }
+        .status-offline { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.3); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
         }
 
+        .top-navbar {
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+            background: var(--navbar-bg);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px var(--shadow);
+            border: 1px solid var(--border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .tab-btn-group { display: flex; gap: 8px; }
+
         .tab-btn {
-            background-color: var(--card-bg);
+            background-color: var(--input-bg);
             color: var(--text-muted);
             border: 1px solid var(--border);
-            padding: 12px 25px;
-            font-size: 15px;
+            padding: 10px 20px;
+            font-size: 14px;
             font-weight: 700;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .tab-btn.active {
             background-color: var(--primary);
-            color: #0f172a;
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .right-nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle-btn {
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .theme-toggle-btn:hover {
             border-color: var(--primary);
         }
 
@@ -70,165 +159,237 @@
 
         .dashboard-layout {
             display: grid;
-            grid-template-columns: 1fr 1.8fr;
-            gap: 25px;
+            grid-template-columns: 1.1fr 1.9fr;
+            gap: 20px;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         .card {
             background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px var(--shadow);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        .left-column { display: flex; flex-direction: column; gap: 25px; }
-        h2 { margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 700; }
-        .date-header { color: var(--primary); font-weight: 600; font-size: 16px; margin-top: -12px; }
+        .left-column { display: flex; flex-direction: column; gap: 20px; }
+        
+        h2 { margin: 0; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .date-header { color: var(--primary); font-weight: 600; font-size: 14px; margin-top: -8px; }
 
         .progress-container {
-            background: #16161a; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--input-bg); 
+            padding: 16px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            box-shadow: inset 0 1px 2px var(--shadow);
         }
-        .progress-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; font-weight: 600; }
-        .progress-bar-bg { background: #2d2d38; height: 10px; border-radius: 5px; overflow: hidden; }
-        .progress-bar-fill { background: var(--success); height: 100%; width: 0%; transition: width 0.4s ease; }
+        .progress-label { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-size: 13px; 
+            margin-bottom: 10px; 
+            font-weight: 700; 
+        }
+        .progress-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .progress-bar-bg { 
+            background: var(--bg-color); 
+            height: 14px; 
+            border-radius: 30px; 
+            overflow: hidden; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .progress-bar-fill { 
+            background: linear-gradient(90deg, #10b981 0%, #0ea5e9 100%); 
+            background-size: 30px 30px;
+            background-image: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.15) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.15) 75%,
+                transparent 75%,
+                transparent
+            );
+            height: 100%; 
+            width: 0%; 
+            border-radius: 30px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            animation: progress-bar-stripes 1s linear infinite;
+        }
 
-        .input-group { display: flex; flex-direction: column; gap: 12px; }
-        .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @keyframes progress-bar-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 30px 0; }
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        label { font-size: 12px; font-weight: 600; margin-bottom: -6px; opacity: 0.9; }
 
         input[type="text"], select, textarea, input[type="date"] {
             background-color: var(--input-bg);
             border: 1px solid var(--border);
             color: var(--text-color);
-            padding: 14px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 6px;
             font-size: 14px;
+            transition: all 0.2s ease;
         }
         input[type="text"]:focus, select:focus, textarea:focus, input[type="date"]:focus {
-            outline: none; border-color: var(--primary);
+            outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         .btn {
-            padding: 14px 20px; border: none; border-radius: 8px;
+            padding: 12px 16px; border: none; border-radius: 6px;
             cursor: pointer; font-size: 14px; font-weight: 600;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            transition: opacity 0.2s;
         }
-        .btn-primary { background-color: var(--primary); color: #0f172a; }
-        .btn-success { background-color: var(--success); color: white; }
-        .btn-wa { background-color: #25d366; color: white; }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-success { background-color: #0ea5e9; color: white; }
+        .btn-wa { background-color: #16a34a; color: white; }
         .btn-danger { background-color: var(--danger); color: white; }
-        .btn-secondary { background-color: #4b5563; color: white; font-size: 12px; padding: 8px 12px; }
+        .btn-secondary { background-color: var(--text-muted); color: var(--card-bg); font-size: 12px; padding: 6px 10px; border-radius: 4px; }
 
-        .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .notepad-title { font-size: 16px; font-weight: 600; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        textarea { height: 160px; resize: none; font-family: inherit; }
+        .share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .notepad-title { font-size: 14px; font-weight: 700; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+        textarea { height: 130px; resize: none; font-family: inherit; }
 
-        .right-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-content: start; }
+        .right-column { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-content: start; }
         
         .search-filter-box {
-            background-color: #1a1a20; padding: 15px; border-radius: 12px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; grid-column: span 2;
+            background-color: var(--input-bg); padding: 16px; border-radius: 8px;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; grid-column: span 2;
         }
-        .search-filter-title { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; }
-        .search-filter-inputs { display: flex; gap: 10px; }
-        .search-filter-inputs input { flex: 1; padding: 10px; }
+        .search-filter-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+        .search-filter-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .search-filter-inputs-mor { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .search-filter-inputs input, .search-filter-inputs select, .search-filter-inputs-mor select, .search-filter-inputs-mor input { padding: 8px; font-size: 13px; }
 
-        .list-section { background: #22222b; padding: 20px; border-radius: 12px; border: 1px solid var(--border); min-height: 180px; }
-        .list-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-        .list-section h3 { margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .list-section { background: var(--card-bg); padding: 16px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; box-shadow: 0 1px 3px var(--shadow); }
+        .list-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        .list-section h3 { margin: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .title-active { color: var(--danger); }
         .title-completed { color: var(--success); }
         .title-history { color: var(--text-muted); }
 
-        ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-        li { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; gap: 10px; }
+        ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        li { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; gap: 8px; transition: background 0.2s; }
+        li:hover { background: var(--list-item-hover); }
 
         .todo-content { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-        .todo-text { font-size: 14px; font-weight: 600; word-break: break-all; }
-        .todo-text.line-through { text-decoration: line-through; color: var(--text-muted); }
-        .meta-tag { font-size: 11px; display: inline-block; background: #2e2e38; padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: var(--primary); }
-        .todo-remark { font-size: 12px; color: var(--text-muted); font-style: italic; }
-        .todo-time-info { font-size: 10px; color: #636370; margin-top: 2px; display: flex; flex-direction: column; }
-        .badge-overdue { background-color: var(--danger); color: white; font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; text-transform: uppercase; }
+        .todo-text { font-size: 13px; font-weight: 600; word-break: break-all; }
+        .todo-text.line-through { text-decoration: line-through; color: var(--text-muted); font-weight: 500; }
+        .meta-tag { font-size: 10px; display: inline-block; background: var(--meta-bg); padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: var(--meta-text); font-weight: 600; }
+        .todo-remark { font-size: 11px; color: var(--warning); font-weight: 600; }
+        
+        /* Modifikasi desain info waktu terpisah */
+        .todo-time-info { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+        .time-row { display: block; line-height: 1.4; }
 
-        .status-icon { cursor: pointer; font-size: 18px; user-select: none; margin-top: -2px; }
-        .action-btns { display: flex; flex-direction: column; gap: 4px; }
-        .action-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
-        .edit-btn { background-color: var(--warning); color: #000; }
-        .delete-btn { background-color: var(--danger); color: white; }
-        .empty-message { color: var(--text-muted); font-style: italic; font-size: 13px; margin: 5px 0; }
+        .badge-overdue { background-color: var(--danger-light); color: var(--danger); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
+        .badge-unsynced { background-color: var(--warning-light); color: var(--warning); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
+
+        .status-icon { cursor: pointer; font-size: 16px; user-select: none; padding-right: 4px; }
+        .action-btns { display: flex; gap: 4px; align-self: center; }
+        .action-btn { border: none; padding: 6px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
+        .edit-btn { background-color: var(--warning-light); color: var(--warning); border: 1px solid rgba(217, 119, 6, 0.2); }
+        .delete-btn { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.2); }
+        .empty-message { color: var(--text-muted); font-style: italic; font-size: 12px; margin: 2px 0; }
 
         @media (max-width: 950px) {
             .dashboard-layout { grid-template-columns: 1fr; }
             .right-column { grid-template-columns: 1fr; }
             .search-filter-box { grid-column: span 1; }
-            .search-filter-inputs { flex-direction: column; }
+            .search-filter-inputs, .search-filter-inputs-mor { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<div id="network-status-badge" class="status-online">● Terhubung Cloud</div>
 <div id="loading-overlay">⏳ Menghubungkan ke Google Sheets API...</div>
 
-<div class="navigation-tabs">
-    <button class="tab-btn active" onclick="switchTab('todo-panel', this)">📅 TO DO LIST</button>
-    <button class="tab-btn" onclick="switchTab('mor-panel', this)">📋 DAFTAR MOR</button>
+<div class="top-navbar">
+    <div class="tab-btn-group">
+        <button class="tab-btn active" onclick="switchTab('todo-panel', this)">📅 TO DO LIST</button>
+        <button class="tab-btn" onclick="switchTab('mor-panel', this)">📋 DAFTAR MOR</button>
+    </div>
+    <div class="right-nav-controls">
+        <button class="theme-toggle-btn" onclick="toggleTheme()">🌓 <span id="theme-text">Dark Mode</span></button>
+        <button class="btn btn-secondary" style="background:var(--primary); color:white;" onclick="fetchAllFromSheets()">🔄 Sinkronisasi</button>
+    </div>
 </div>
 
-<!-- ==================== TAB 1: TO DO LIST ==================== -->
+<!-- TAB 1: TO DO LIST -->
 <div id="todo-panel" class="tab-content active">
     <div class="dashboard-layout">
         <div class="left-column">
             <div class="card">
-                <h2>TO DO LIST DIPPS</h2>
+                <h2>📅 To-Do List Dashboard</h2>
                 <div class="date-header class-date-display">-- - -- - ----</div>
                 
                 <div class="progress-container">
-                    <div class="progress-label"><span>Progress Hari Ini</span><span id="todo-progress-text">0% (0/0)</span></div>
+                    <div class="progress-label">
+                        <span>Progress Tugas Hari Ini</span>
+                        <span id="todo-progress-text" class="progress-badge">0% (0/0)</span>
+                    </div>
                     <div class="progress-bar-bg"><div id="todo-progress-bar" class="progress-bar-fill"></div></div>
                 </div>
 
                 <div class="input-group">
-                    <input type="text" id="todo-input" placeholder="Nama Kegiatan...">
-                    <input type="text" id="todo-remark-input" placeholder="Remark / Review (Opsional)...">
-                    <button class="btn btn-primary" onclick="addTodo()">Tambah Tugas</button>
+                    <label>Nama Kegiatan</label>
+                    <input type="text" id="todo-input" placeholder="Masukkan nama tugas baru...">
+                    <label>Remark / Review</label>
+                    <input type="text" id="todo-remark-input" placeholder="Catatan tambahan (opsional)...">
+                    <button class="btn btn-primary" onclick="addTodo()">➕ Tambah Tugas</button>
                 </div>
 
                 <div class="share-row">
-                    <button class="btn btn-success" onclick="copyToClipboard('todo')">📋 Salin Format</button>
-                    <button class="btn btn-wa" onclick="sendToWhatsApp('todo')">💬 Kirim ke WA</button>
+                    <button class="btn btn-success" onclick="copyToClipboard('todo')">📋 Salin Report</button>
+                    <button class="btn btn-wa" onclick="sendToWhatsApp('todo')">💬 Kirim WA</button>
                 </div>
             </div>
-
             <div class="card">
                 <div class="notepad-title">📝 Notepad Umum (Todo)</div>
-                <textarea id="general-notepad" onblur="saveNotepad('todo')" placeholder="Tulis catatan penting... Catatan otomatis tersinkronisasi saat memindahkan kursor keluar kotak."></textarea>
+                <textarea id="general-notepad" onblur="saveNotepad('todo')" placeholder="Tulis catatan penting harian di sini..."></textarea>
             </div>
         </div>
-
         <div class="right-column">
             <div class="search-filter-box">
-                <div class="search-filter-title">🔍 Cari & Filter Riwayat (Todo)</div>
+                <div class="search-filter-title">🔍 Pencarian & Filter</div>
                 <div class="search-filter-inputs">
                     <input type="text" id="todo-search-name" oninput="renderTodos()" placeholder="Cari nama tugas...">
                     <input type="date" id="todo-search-date" onchange="renderTodos()">
-                    <button class="action-btn delete-btn" style="padding:0 10px;" onclick="clearFilter('todo')">Reset</button>
                 </div>
+                <button class="action-btn delete-btn" style="width:fit-content; margin-top:4px;" onclick="clearFilter('todo')">Reset Filter</button>
             </div>
-
             <div class="list-section"><div class="list-header-flex"><h3 class="title-active">❌ Hari Ini: Belum</h3></div><ul id="active-list"></ul></div>
             <div class="list-section"><div class="list-header-flex"><h3 class="title-completed">✅ Hari Ini: Selesai</h3></div><ul id="completed-list"></ul></div>
-            <div class="list-section"><div class="list-header-flex"><h3 class="title-history">⏳ Riwayat: Belum Selesai</h3></div><ul id="history-active-list"></ul></div>
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-history">⏳ Riwayat Lama: Belum</h3></div><ul id="history-active-list"></ul></div>
             <div class="list-section">
                 <div class="list-header-flex">
-                    <h3 class="title-history">💾 Riwayat: Sudah Selesai</h3>
-                    <button class="btn btn-secondary" style="padding: 3px 8px; background:#ef4444;" onclick="clearBulkHistory('todo')">🗑️ Bersihkan</button>
+                    <h3 class="title-history">💾 Riwayat Lama: Selesai</h3>
+                    <button class="btn btn-secondary" style="padding: 2px 6px; background:#ef4444; color:white;" onclick="clearBulkHistory('todo')">🗑️ Bersihkan</button>
                 </div>
                 <ul id="history-completed-list"></ul>
             </div>
@@ -236,72 +397,104 @@
     </div>
 </div>
 
-<!-- ==================== TAB 2: DAFTAR MOR ==================== -->
+<!-- TAB 2: DAFTAR MOR -->
 <div id="mor-panel" class="tab-content">
     <div class="dashboard-layout">
         <div class="left-column">
             <div class="card">
-                <h2>DAFTAR MOR DIPPS</h2>
+                <h2>📋 MOR Management Dashboard</h2>
                 <div class="date-header class-date-display">-- - -- - ----</div>
 
                 <div class="progress-container">
-                    <div class="progress-label"><span>Progress MOR Hari Ini</span><span id="mor-progress-text">0% (0/0)</span></div>
+                    <div class="progress-label">
+                        <span>Progress MOR Hari Ini</span>
+                        <span id="mor-progress-text" class="progress-badge">0% (0/0)</span>
+                    </div>
                     <div class="progress-bar-bg"><div id="mor-progress-bar" class="progress-bar-fill"></div></div>
                 </div>
                 
                 <div class="input-group">
-                    <input type="text" id="mor-name-input" placeholder="Nama MOR...">
+                    <label>Nama MOR</label>
+                    <input type="text" id="mor-name-input" placeholder="Masukkan nama MOR baru...">
+                    
                     <div class="select-row">
-                        <select id="mor-unit-input">
-                            <option value="HTC SODONG">HTC SODONG</option>
-                            <option value="HTC NEGLASARI">HTC NEGLASARI</option>
-                            <option value="HTC BOYOLALI">HTC BOYOLALI</option>
-                            <option value="FARM TAMANSARI FLOCK IMS">FARM TAMANSARI FLOCK IMS</option>
-                            <option value="FARM TAMANSARI FLOCK BIM">FARM TAMANSARI FLOCK BIM</option>
-                            <option value="FARM TAMANSARI FLOCK BERDIKARI">FARM TAMANSARI FLOCK BERDIKARI</option>
-                            <option value="FARM CARENANG">FARM CARENANG</option>
-                            <option value="FARM LEUWIDAMAR">FARM LEUWIDAMAR</option>
-                        </select>
-                        <select id="mor-type-input">
-                            <option value="GENERAL">GENERAL</option>
-                            <option value="OVK">OVK</option>
-                            <option value="PROJECT">PROJECT</option>
-                            <option value="SEKAM">SEKAM</option>
-                        </select>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label>Unit Kerja</label>
+                            <select id="mor-unit-input">
+                                <option value="HTC SODONG">HTC SODONG</option>
+                                <option value="HTC NEGLASARI">HTC NEGLASARI</option>
+                                <option value="HTC BOYOLALI">HTC BOYOLALI</option>
+                                <option value="FARM TAMANSARI FLOCK IMS">FARM TAMANSARI FLOCK IMS</option>
+                                <option value="FARM TAMANSARI FLOCK BIM">FARM TAMANSARI FLOCK BIM</option>
+                                <option value="FARM TAMANSARI FLOCK BERDIKARI">FARM TAMANSARI FLOCK BERDIKARI</option>
+                                <option value="FARM CARENANG">FARM CARENANG</option>
+                                <option value="FARM LEUWIDAMAR">FARM LEUWIDAMAR</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label>Jenis MOR</label>
+                            <select id="mor-type-input">
+                                <option value="GENERAL">GENERAL</option>
+                                <option value="OVK">OVK</option>
+                                <option value="PROJECT">PROJECT</option>
+                                <option value="SEKAM">SEKAM</option>
+                            </select>
+                        </div>
                     </div>
-                    <input type="text" id="mor-remark-input" placeholder="Remark / Review (Opsional)...">
-                    <button class="btn btn-primary" onclick="addMor()">Tambah Data MOR</button>
+                    
+                    <label>Remark / Review</label>
+                    <input type="text" id="mor-remark-input" placeholder="Catatan review lapangan (opsional)...">
+                    <button class="btn btn-primary" onclick="addMor()">➕ Tambah Data MOR</button>
                 </div>
 
                 <div class="share-row">
-                    <button class="btn btn-success" onclick="copyToClipboard('mor')">📋 Salin Format</button>
-                    <button class="btn btn-wa" onclick="sendToWhatsApp('mor')">💬 Kirim ke WA</button>
+                    <button class="btn btn-success" onclick="copyToClipboard('mor')">📋 Salin Report</button>
+                    <button class="btn btn-wa" onclick="sendToWhatsApp('mor')">💬 Kirim WA</button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="notepad-title">📝 Notepad Khusus MOR</div>
-                <textarea id="mor-notepad" onblur="saveNotepad('mor')" placeholder="Tulis catatan khusus MOR di sini... Catatan otomatis tersinkronisasi saat memindahkan kursor keluar kotak."></textarea>
+                <textarea id="mor-notepad" onblur="saveNotepad('mor')" placeholder="Tulis catatan khusus MOR di sini..."></textarea>
             </div>
         </div>
-
         <div class="right-column">
             <div class="search-filter-box">
-                <div class="search-filter-title">🔍 Cari & Filter Riwayat (MOR)</div>
-                <div class="search-filter-inputs">
+                <div class="search-filter-title">🔍 Saringan Filter Data MOR</div>
+                <div class="search-filter-inputs-mor">
                     <input type="text" id="mor-search-name" oninput="renderMors()" placeholder="Cari nama MOR...">
+                    <select id="mor-search-unit" onchange="renderMors()">
+                        <option value="">-- Semua Unit --</option>
+                        <option value="HTC SODONG">HTC SODONG</option>
+                        <option value="HTC NEGLASARI">HTC NEGLASARI</option>
+                        <option value="HTC BOYOLALI">HTC BOYOLALI</option>
+                        <option value="FARM TAMANSARI FLOCK IMS">FARM TAMANSARI FLOCK IMS</option>
+                        <option value="FARM TAMANSARI FLOCK BIM">FARM TAMANSARI FLOCK BIM</option>
+                        <option value="FARM TAMANSARI FLOCK BERDIKARI">FARM TAMANSARI FLOCK BERDIKARI</option>
+                        <option value="FARM CARENANG">FARM CARENANG</option>
+                        <option value="FARM LEUWIDAMAR">FARM LEUWIDAMAR</option>
+                    </select>
+                    <select id="mor-search-type" onchange="renderMors()">
+                        <option value="">-- Semua Jenis --</option>
+                        <option value="GENERAL">GENERAL</option>
+                        <option value="OVK">OVK</option>
+                        <option value="PROJECT">PROJECT</option>
+                        <option value="SEKAM">SEKAM</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:4px; align-items:center;">
                     <input type="date" id="mor-search-date" onchange="renderMors()">
-                    <button class="action-btn delete-btn" style="padding:0 10px;" onclick="clearFilter('mor')">Reset</button>
+                    <button class="action-btn delete-btn" onclick="clearFilter('mor')">Reset Filter</button>
                 </div>
             </div>
 
             <div class="list-section"><div class="list-header-flex"><h3 class="title-active">❌ MOR Hari Ini: Belum</h3></div><ul id="mor-active-list"></ul></div>
             <div class="list-section"><div class="list-header-flex"><h3 class="title-completed">✅ MOR Hari Ini: Selesai</h3></div><ul id="mor-completed-list"></ul></div>
-            <div class="list-section"><div class="list-header-flex"><h3 class="title-history">⏳ MOR Riwayat: Belum</h3></div><ul id="mor-history-active-list"></ul></div>
+            <div class="list-section"><div class="list-header-flex"><h3 class="title-history">⏳ MOR Riwayat Lama: Belum</h3></div><ul id="mor-history-active-list"></ul></div>
             <div class="list-section">
                 <div class="list-header-flex">
-                    <h3 class="title-history">💾 MOR Riwayat: Selesai</h3>
-                    <button class="btn btn-secondary" style="padding: 3px 8px; background:#ef4444;" onclick="clearBulkHistory('mor')">🗑️ Bersihkan</button>
+                    <h3 class="title-history">💾 MOR Riwayat Lama: Selesai</h3>
+                    <button class="btn btn-secondary" style="padding: 2px 6px; background:#ef4444; color:white;" onclick="clearBulkHistory('mor')">🗑️ Bersihkan</button>
                 </div>
                 <ul id="mor-history-completed-list"></ul>
             </div>
@@ -310,15 +503,48 @@
 </div>
 
 <script>
-    // URL Web App Google Apps Script milikmu yang baru
-    const API_URL = "https://script.google.com/macros/s/AKfycbxfIrfYOUTYF4ixYONe6xZ8cZcaUtp3kxcoymlrR1BaCUZ3iOTMLbVU7jgzlvYpE3p8rA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbysqKt0dVQYEq9GoyvB9oUa5KK0G_3N8OvOPo-SnCl0YySMslrTM2kwiFpsLrECJKRxhQ/exec";
 
     let todos = [];
     let mors = [];
+    let isOfflineMode = false;
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('dipps_dashboard_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('theme-text').innerText = savedTheme === 'light' ? 'Dark Mode' : 'Light Mode';
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('dipps_dashboard_theme', newTheme);
+        document.getElementById('theme-text').innerText = newTheme === 'light' ? 'Dark Mode' : 'Light Mode';
+    }
 
     function showLoading(show) {
         document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
     }
+
+    function updateNetworkStatus() {
+        const badge = document.getElementById('network-status-badge');
+        if (navigator.onLine) {
+            badge.innerText = "● Terhubung Cloud";
+            badge.className = "status-online";
+            if(isOfflineMode) {
+                isOfflineMode = false;
+                syncAllToSheets();
+            }
+        } else {
+            badge.innerText = "⚠️ Mode Offline (Simpan Lokal)";
+            badge.className = "status-offline";
+            isOfflineMode = true;
+        }
+    }
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
 
     function getFormattedDate(dateObj) {
         return `${dateObj.getDate()} - ${dateObj.getMonth() + 1} - ${dateObj.getFullYear()}`;
@@ -347,9 +573,13 @@
         btn.classList.add('active');
     }
 
-    // ==================== DATABASE CLOUD ENGINE ====================
+    // ==================== ENGINE CORE CRUD SYSTEM ====================
     
     function fetchAllFromSheets() {
+        if(!navigator.onLine) {
+            loadFromLocalStorageBackup();
+            return;
+        }
         showLoading(true);
         fetch(API_URL)
             .then(response => response.json())
@@ -363,17 +593,25 @@
                 document.getElementById('general-notepad').value = fetchedNotepads['todo'] || '';
                 document.getElementById('mor-notepad').value = fetchedNotepads['mor'] || '';
 
+                saveToLocalStorageBackup();
                 renderTodos();
                 renderMors();
                 showLoading(false);
             })
             .catch(err => {
-                alert("Gagal memuat database Google Sheets!");
+                loadFromLocalStorageBackup();
                 showLoading(false);
             });
     }
 
     function syncAllToSheets() {
+        saveToLocalStorageBackup();
+        if (!navigator.onLine) {
+            renderTodos();
+            renderMors();
+            return;
+        }
+        
         showLoading(true);
         const combinedList = [...todos, ...mors];
         
@@ -386,10 +624,14 @@
         })
         .then(res => res.json())
         .then(result => {
+            todos.forEach(t => t.unsynced = false);
+            mors.forEach(m => m.unsynced = false);
+            saveToLocalStorageBackup();
             showLoading(false);
+            renderTodos();
+            renderMors();
         })
         .catch(err => {
-            alert("Gagal sinkronisasi data ke cloud.");
             showLoading(false);
         });
     }
@@ -399,16 +641,26 @@
             ? document.getElementById('general-notepad').value 
             : document.getElementById('mor-notepad').value;
             
+        localStorage.setItem(`backup_notepad_${type}`, textValue);
+        if (!navigator.onLine) return;
+
         fetch(API_URL, {
             method: 'POST',
-            body: JSON.stringify({
-                action: "saveNotepad",
-                type: type,
-                text: textValue
-            })
-        })
-        .then(res => res.json())
-        .then(result => console.log(`Notepad ${type} tersinkronisasi!`));
+            body: JSON.stringify({ action: "saveNotepad", type: type, text: textValue })});
+    }
+
+    function saveToLocalStorageBackup() {
+        localStorage.setItem('offline_todos', JSON.stringify(todos));
+        localStorage.setItem('offline_mors', JSON.stringify(mors));
+    }
+
+    function loadFromLocalStorageBackup() {
+        todos = JSON.parse(localStorage.getItem('offline_todos')) || [];
+        mors = JSON.parse(localStorage.getItem('offline_mors')) || [];
+        document.getElementById('general-notepad').value = localStorage.getItem('backup_notepad_todo') || '';
+        document.getElementById('mor-notepad').value = localStorage.getItem('backup_notepad_mor') || '';
+        renderTodos();
+        renderMors();
     }
 
     function clearFilter(type) {
@@ -419,6 +671,8 @@
         } else {
             document.getElementById('mor-search-name').value = '';
             document.getElementById('mor-search-date').value = '';
+            document.getElementById('mor-search-unit').value = '';
+            document.getElementById('mor-search-type').value = '';
             renderMors();
         }
     }
@@ -428,15 +682,13 @@
         const todayStr = getFormattedDate(new Date());
         if(type === 'todo') {
             todos = todos.filter(t => !(t.createdDateStr !== todayStr && t.completed));
-            renderTodos();
         } else {
             mors = mors.filter(m => !(m.createdDateStr !== todayStr && m.completed));
-            renderMors();
         }
         syncAllToSheets();
     }
 
-    /* ==================== HANDLER MENU 1: TODO ==================== */
+    /* ==================== TODO CRUD ==================== */
     function addTodo() {
         const input = document.getElementById('todo-input');
         const remarkInput = document.getElementById('todo-remark-input');
@@ -452,10 +704,10 @@
             createdTimeStr: getFormattedTime(now),
             completedTimeStr: '',
             timestamp: now.getTime(),
-            type: 'TODO'
+            type: 'TODO',
+            unsynced: !navigator.onLine
         });
         input.value = ''; remarkInput.value = '';
-        renderTodos();
         syncAllToSheets();
     }
 
@@ -463,18 +715,21 @@
         todos = todos.map(t => {
             if (t.id === id) {
                 const now = new Date();
-                return { ...t, completed: !t.completed, completedTimeStr: !t.completed ? `${getFormattedDate(now)} (${getFormattedTime(now)})` : '' };
+                return { 
+                    ...t, 
+                    completed: !t.completed, 
+                    completedTimeStr: !t.completed ? `${getFormattedDate(now)} (${getFormattedTime(now)})` : '',
+                    unsynced: !navigator.onLine
+                };
             }
             return t;
         });
-        renderTodos();
         syncAllToSheets();
     }
 
     function deleteTodo(id) {
         if(confirm("Hapus tugas ini?")) {
             todos = todos.filter(t => t.id !== id);
-            renderTodos();
             syncAllToSheets();
         }
     }
@@ -485,8 +740,7 @@
         if (!nText || nText.trim() === '') return;
         const nRemark = prompt("Edit Remark:", item.remark.replace(/[()]/g, ''));
         
-        todos = todos.map(t => t.id === id ? { ...t, text: nText.trim().toUpperCase(), remark: nRemark.trim() ? `(${nRemark.trim().toUpperCase()})` : '' } : t);
-        renderTodos();
+        todos = todos.map(t => t.id === id ? { ...t, text: nText.trim().toUpperCase(), remark: nRemark.trim() ? `(${nRemark.trim().toUpperCase()})` : '', unsynced: !navigator.onLine } : t);
         syncAllToSheets();
     }
 
@@ -514,13 +768,19 @@
             const isOverdue = !todo.completed && (currentMs - (todo.timestamp || todo.id) > 86400000);
 
             const li = document.createElement('li');
+            
+            // PERUBAHAN UTAMA: Memisahkan teks "Buat" dan status "Selesai / Belum" ke baris berbeda menggunakan <div>
             li.innerHTML = `
                 <span class="status-icon" onclick="toggleTodoStatus(${todo.id})">${todo.completed ? '✅' : '❌'}</span>
                 <div class="todo-content">
                     <span class="todo-text ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
                     ${todo.remark ? `<span class="todo-remark">${todo.remark}</span>` : ''}
-                    <div class="todo-time-info">Buat: ${todo.createdDateStr} <br> ${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</div>
+                    <div class="todo-time-info">
+                        <span class="time-row">Buat: ${todo.createdDateStr}</span>
+                        <span class="time-row">${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</span>
+                    </div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
+                    ${todo.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
                 <div class="action-btns">
                     <button class="action-btn edit-btn" onclick="editTodo(${todo.id})">📝</button>
@@ -547,7 +807,7 @@
         if(cCompletedHist===0) historyCompletedList.innerHTML = '<p class="empty-message">Kosong</p>';
     }
 
-    /* ==================== HANDLER MENU 2: MOR ==================== */
+    /* ==================== MOR CRUD ==================== */
     function addMor() {
         const nameInput = document.getElementById('mor-name-input');
         const unitInput = document.getElementById('mor-unit-input');
@@ -566,10 +826,10 @@
             createdDateStr: getFormattedDate(now),
             createdTimeStr: getFormattedTime(now),
             completedTimeStr: '',
-            timestamp: now.getTime()
+            timestamp: now.getTime(),
+            unsynced: !navigator.onLine
         });
         nameInput.value = ''; remarkInput.value = '';
-        renderMors();
         syncAllToSheets();
     }
 
@@ -577,18 +837,21 @@
         mors = mors.map(m => {
             if (m.id === id) {
                 const now = new Date();
-                return { ...m, completed: !m.completed, completedTimeStr: !m.completed ? `${getFormattedDate(now)} (${getFormattedTime(now)})` : '' };
+                return { 
+                    ...m, 
+                    completed: !m.completed, 
+                    completedTimeStr: !m.completed ? `${getFormattedDate(now)} (${getFormattedTime(now)})` : '',
+                    unsynced: !navigator.onLine
+                };
             }
             return m;
         });
-        renderMors();
         syncAllToSheets();
     }
 
     function deleteMor(id) {
         if(confirm("Hapus data MOR?")) {
             mors = mors.filter(m => m.id !== id);
-            renderMors();
             syncAllToSheets();
         }
     }
@@ -599,8 +862,7 @@
         if (!nText || nText.trim() === '') return;
         const nRemark = prompt("Edit Remark:", item.remark.replace(/[()]/g, ''));
         
-        mors = mors.map(m => m.id === id ? { ...m, text: nText.trim().toUpperCase(), remark: nRemark.trim() ? `(${nRemark.trim().toUpperCase()})` : '' } : m);
-        renderMors();
+        mors = mors.map(m => m.id === id ? { ...m, text: nText.trim().toUpperCase(), remark: nRemark.trim() ? `(${nRemark.trim().toUpperCase()})` : '', unsynced: !navigator.onLine } : m);
         syncAllToSheets();
     }
 
@@ -615,30 +877,38 @@
         const currentMs = Date.now();
 
         const queryName = document.getElementById('mor-search-name').value.trim().toUpperCase();
+        const queryUnit = document.getElementById('mor-search-unit').value;
+        const queryType = document.getElementById('mor-search-type').value;
         const queryRawDate = document.getElementById('mor-search-date').value;
         const queryDate = convertInputDateToAppFormat(queryRawDate);
 
-        let cActiveToday = 0, cCompletedToday = 0, cActiveHist = 0, cCompletedHist = 0;
-
         mors.forEach(mor => {
             if (queryName && !mor.text.includes(queryName)) return;
+            if (queryUnit && mor.unit !== queryUnit) return;
+            if (queryType && mor.type !== queryType) return;
             if (queryDate && mor.createdDateStr !== queryDate) return;
 
             const isToday = mor.createdDateStr === todayStr;
             const isOverdue = !mor.completed && (currentMs - (mor.timestamp || mor.id) > 86400000);
 
             const li = document.createElement('li');
+            
+            // PERUBAHAN UTAMA: Memisahkan teks "Buat" dan status "Selesai / Belum" ke baris berbeda menggunakan <div>
             li.innerHTML = `
                 <span class="status-icon" onclick="toggleMorStatus(${mor.id})">${mor.completed ? '✅' : '❌'}</span>
                 <div class="todo-content">
                     <span class="todo-text ${mor.completed ? 'line-through' : ''}">${mor.text}</span>
-                    <div>
-                        <span class="meta-tag">${mor.type}</span>
-                        <span class="meta-tag" style="color:var(--text-muted); background:#27272a;">${mor.unit}</span>
+                    <div style="margin-top:2px;">
+                        <span class="meta-tag" style="background:var(--primary-light); color:var(--primary);">${mor.type}</span>
+                        <span class="meta-tag">${mor.unit}</span>
                     </div>
                     ${mor.remark ? `<span class="todo-remark">${mor.remark}</span>` : ''}
-                    <div class="todo-time-info">Buat: ${mor.createdDateStr} | ${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</div>
+                    <div class="todo-time-info">
+                        <span class="time-row">Buat: ${mor.createdDateStr}</span>
+                        <span class="time-row">${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</span>
+                    </div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
+                    ${mor.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
                 <div class="action-btns">
                     <button class="action-btn edit-btn" onclick="editMor(${mor.id})">📝</button>
@@ -677,7 +947,6 @@
             res = `TO DO LIST DIPPS\n${todayStr}\n\n`;
             todayTodos.forEach(t => {
                 const icon = t.completed ? '✅' : '❌';
-                // FILTRASI: Jika belum selesai, ikut sertakan remark. Jika sudah selesai, remark dibuang.
                 const textWithRemark = (!t.completed && t.remark) ? `${t.text} ${t.remark}` : t.text;
                 res += `- ${textWithRemark} ${icon}\n`;
             });
@@ -686,9 +955,8 @@
             if (todayMors.length === 0) return "";
             
             res = `DAFTAR MOR DIPPS\n${todayStr}\n\n`;
-            todayMors.forEach(m => {
+            mors.forEach(m => {
                 const icon = m.completed ? '✅' : '❌';
-                // FILTRASI: Jika belum selesai, ikut sertakan remark. Jika sudah selesai, remark dibuang.
                 const textWithRemark = (!m.completed && m.remark) ? `${m.text} ${m.remark}` : m.text;
                 res += `- ${textWithRemark} [${m.type}] ${icon}\n`;
             });
@@ -699,7 +967,7 @@
     function copyToClipboard(type) {
         const text = buildTextString(type);
         if(!text) return alert('Daftar hari ini masih kosong!');
-        navigator.clipboard.writeText(text).then(() => alert('Format teks hari ini disalin!'));
+        navigator.clipboard.writeText(text).then(() => alert('Format teks report harian berhasil disalin!'));
     }
 
     function sendToWhatsApp(type) {
@@ -713,7 +981,9 @@
     document.getElementById('todo-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addTodo(); });
     document.getElementById('mor-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addMor(); });
 
+    initTheme();
     initDates();
+    updateNetworkStatus();
     fetchAllFromSheets();
 </script>
 
