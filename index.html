@@ -76,9 +76,11 @@
             align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .tab-btn-group { display: flex; gap: 8px; }
+        .tab-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .tab-btn {
             background-color: #f1f5f9;
@@ -125,7 +127,6 @@
         h2 { margin: 0; font-size: 20px; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .date-header { color: var(--primary); font-weight: 600; font-size: 14px; margin-top: -8px; }
 
-        /* ==================== DESAIN PROGRESS BAR PREMIUM BARU ==================== */
         .progress-container {
             background: #f8fafc; 
             padding: 16px; 
@@ -158,30 +159,29 @@
             position: relative;
         }
         .progress-bar-fill { 
-    background-color: #10b981; /* Warna hijau solid dasar */
-    background-image: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.2) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.2) 75%,
-        transparent 75%,
-        transparent
-    );
-    background-size: 30px 30px;
-    height: 100%; 
-    width: 0%; 
-    border-radius: 30px;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-    animation: progress-bar-stripes 1s linear infinite;
-}
+            background-color: #10b981;
+            background-image: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 30px 30px;
+            height: 100%; 
+            width: 0%; 
+            border-radius: 30px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            animation: progress-bar-stripes 1s linear infinite;
+        }
 
         @keyframes progress-bar-stripes {
             0% { background-position: 0 0; }
             100% { background-position: 30px 0; }
         }
-        /* ========================================================================== */
 
         .input-group { display: flex; flex-direction: column; gap: 10px; }
         .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -219,6 +219,7 @@
         textarea { height: 130px; resize: none; font-family: inherit; }
 
         .right-column { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-content: start; }
+        .full-width-column { display: flex; flex-direction: column; gap: 16px; grid-column: span 2; }
         
         .search-filter-box {
             background-color: #f8fafc; padding: 16px; border-radius: 8px;
@@ -227,6 +228,7 @@
         .search-filter-title { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         .search-filter-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .search-filter-inputs-mor { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .search-filter-inputs-unit { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
         .list-section { background: var(--card-bg); padding: 16px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .list-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
@@ -245,14 +247,47 @@
         .todo-text.line-through { text-decoration: line-through; color: var(--text-muted); font-weight: 500; }
         .meta-tag { font-size: 10px; display: inline-block; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; margin-right: 4px; color: #334155; font-weight: 600; }
         .todo-remark { font-size: 11px; color: #b45309; font-weight: 500; }
+        
+        .unit-address-box {
+            margin-top: 6px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            word-break: break-word;
+        }
+        .copy-addr-btn {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .copy-addr-btn:hover {
+            background: #0284c7;
+            color: white;
+        }
+
         .todo-time-info { 
-    font-size: 10px; 
-    color: var(--text-muted); 
-    margin-top: 2px; 
-    display: flex; 
-    flex-direction: column; /* Membuat teks otomatis turun ke bawah */
-    gap: 2px;
-}
+            font-size: 10px; 
+            color: var(--text-muted); 
+            margin-top: 2px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px;
+        }
         
         .badge-overdue { background-color: var(--danger-light); color: var(--danger); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
         .badge-unsynced { background-color: var(--warning-light); color: var(--warning); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
@@ -263,6 +298,30 @@
         .edit-btn { background-color: var(--warning-light); color: var(--warning); border: 1px solid rgba(217, 119, 6, 0.2); }
         .delete-btn { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.2); }
         .empty-message { color: var(--text-muted); font-style: italic; font-size: 12px; margin: 2px 0; }
+
+        /* Styling Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+        }
+        .page-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 5px 11px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .page-btn:hover { background: var(--primary-light); color: var(--primary); }
+        .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -274,6 +333,8 @@
     <div class="tab-btn-group">
         <button class="tab-btn active" onclick="switchTab('todo-panel', this)">📅 TO DO LIST</button>
         <button class="tab-btn" onclick="switchTab('mor-panel', this)">📋 DAFTAR MOR</button>
+        <button class="tab-btn" onclick="switchTab('vendor-panel', this)">🏭 DAFTAR VENDOR</button>
+        <button class="tab-btn" onclick="switchTab('unit-panel', this)">🐥 UNIT FARM & HATCHERY</button>
     </div>
     <button class="btn btn-secondary" onclick="fetchAllFromSheets()">🔄 Sinkronisasi Data</button>
 </div>
@@ -443,12 +504,105 @@
     </div>
 </div>
 
+<!-- TAB 3: DAFTAR KODE VENDOR -->
+<div id="vendor-panel" class="tab-content">
+    <div class="dashboard-layout">
+        <div class="left-column">
+            <div class="card">
+                <h2>🏭 Input Data Vendor</h2>
+                <div class="input-group">
+                    <label>Kode Vendor</label>
+                    <input type="text" id="vendor-code-input" placeholder="Contoh: VND-001...">
+                    <label>Nama Vendor</label>
+                    <input type="text" id="vendor-name-input" placeholder="Masukkan nama vendor...">
+                    <button class="btn btn-primary" onclick="addVendor()">➕ Tambah Vendor</button>
+                </div>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="search-filter-box">
+                <div class="search-filter-title">🔍 Pencarian Vendor</div>
+                <div class="search-filter-inputs">
+                    <input type="text" id="vendor-search-code" oninput="renderVendors(1)" placeholder="Cari Kode Vendor...">
+                    <input type="text" id="vendor-search-name" oninput="renderVendors(1)" placeholder="Cari Nama Vendor...">
+                </div>
+                <button class="action-btn delete-btn" style="width:fit-content; margin-top:4px;" onclick="clearFilter('vendor')">Reset Filter</button>
+            </div>
+            <div class="list-section full-width-column">
+                <div class="list-header-flex">
+                    <h3 style="color:var(--primary);">📋 List Master Vendor</h3>
+                </div>
+                <ul id="vendor-list"></ul>
+                <div id="vendor-pagination" class="pagination-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TAB 4: DAFTAR UNIT FARM & HATCHERY -->
+<div id="unit-panel" class="tab-content">
+    <div class="dashboard-layout">
+        <div class="left-column">
+            <div class="card">
+                <h2>🐥 Input Unit Farm & Hatchery</h2>
+                <div class="input-group">
+                    <label>Nama Unit</label>
+                    <input type="text" id="unit-name-input" placeholder="Contoh: Farm SODONG 1...">
+                    <label>Jenis Unit</label>
+                    <select id="unit-type-input">
+                        <option value="htc">Hatchery (HTC)</option>
+                        <option value="broiler">Broiler</option>
+                        <option value="GP">Grand Parent (GP)</option>
+                        <option value="Internal">Internal</option>
+                        <option value="Eksternal">Eksternal</option>
+                    </select>
+                    <label>Alamat Unit</label>
+                    <textarea id="unit-address-input" style="height:70px;" placeholder="Masukkan alamat lokasi unit..."></textarea>
+                    <button class="btn btn-primary" onclick="addUnit()">➕ Tambah Unit</button>
+                </div>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="search-filter-box">
+                <div class="search-filter-title">🔍 Pencarian & Filter Unit</div>
+                <div class="search-filter-inputs-unit">
+                    <input type="text" id="unit-search-name" oninput="renderUnits(1)" placeholder="Cari Nama Unit...">
+                    <select id="unit-search-type" onchange="renderUnits(1)">
+                        <option value="">-- Semua Jenis Unit --</option>
+                        <option value="htc">Hatchery (HTC)</option>
+                        <option value="broiler">Broiler</option>
+                        <option value="GP">Grand Parent (GP)</option>
+                        <option value="Internal">Internal</option>
+                        <option value="Eksternal">Eksternal</option>
+                    </select>
+                    <input type="text" id="unit-search-address" oninput="renderUnits(1)" placeholder="Cari Alamat...">
+                </div>
+                <button class="action-btn delete-btn" style="width:fit-content; margin-top:4px;" onclick="clearFilter('unit')">Reset Filter</button>
+            </div>
+            <div class="list-section full-width-column">
+                <div class="list-header-flex">
+                    <h3 style="color:var(--primary);">📋 Daftar Unit Farm & Hatchery</h3>
+                </div>
+                <ul id="unit-list"></ul>
+                <div id="unit-pagination" class="pagination-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbysqKt0dVQYEq9GoyvB9oUa5KK0G_3N8OvOPo-SnCl0YySMslrTM2kwiFpsLrECJKRxhQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwj5zj79MFyvfdQMJdUCuF3gqyIwhT-0uh-3vT0SkOk_Oxa_wfA4oUhkrpw8FgifB8uWA/exec";
 
     let todos = [];
     let mors = [];
+    let vendors = [];
+    let units = [];
     let isOfflineMode = false;
+
+    // Konfigurasi Halaman (Limit 15 Item per Halaman)
+    const ITEMS_PER_PAGE = 15;
+    let currentVendorPage = 1;
+    let currentUnitPage = 1;
 
     function showLoading(show) {
         document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
@@ -514,7 +668,9 @@
                 const fetchedNotepads = data.notepads || {};
 
                 todos = fetchedList.filter(item => item.type === "TODO");
-                mors = fetchedList.filter(item => item.type !== "TODO" && item.type !== "notepad");
+                mors = fetchedList.filter(item => item.type !== "TODO" && item.type !== "notepad" && item.type !== "VENDOR" && item.type !== "UNIT");
+                vendors = fetchedList.filter(item => item.type === "VENDOR");
+                units = fetchedList.filter(item => item.type === "UNIT");
 
                 document.getElementById('general-notepad').value = fetchedNotepads['todo'] || '';
                 document.getElementById('mor-notepad').value = fetchedNotepads['mor'] || '';
@@ -522,6 +678,8 @@
                 saveToLocalStorageBackup();
                 renderTodos();
                 renderMors();
+                renderVendors(currentVendorPage);
+                renderUnits(currentUnitPage);
                 showLoading(false);
             })
             .catch(err => {
@@ -535,11 +693,13 @@
         if (!navigator.onLine) {
             renderTodos();
             renderMors();
+            renderVendors(currentVendorPage);
+            renderUnits(currentUnitPage);
             return;
         }
         
         showLoading(true);
-        const combinedList = [...todos, ...mors];
+        const combinedList = [...todos, ...mors, ...vendors, ...units];
         
         fetch(API_URL, {
             method: 'POST',
@@ -552,10 +712,14 @@
         .then(result => {
             todos.forEach(t => t.unsynced = false);
             mors.forEach(m => m.unsynced = false);
+            vendors.forEach(v => v.unsynced = false);
+            units.forEach(u => u.unsynced = false);
             saveToLocalStorageBackup();
             showLoading(false);
             renderTodos();
             renderMors();
+            renderVendors(currentVendorPage);
+            renderUnits(currentUnitPage);
         })
         .catch(err => {
             showLoading(false);
@@ -578,15 +742,21 @@
     function saveToLocalStorageBackup() {
         localStorage.setItem('offline_todos', JSON.stringify(todos));
         localStorage.setItem('offline_mors', JSON.stringify(mors));
+        localStorage.setItem('offline_vendors', JSON.stringify(vendors));
+        localStorage.setItem('offline_units', JSON.stringify(units));
     }
 
     function loadFromLocalStorageBackup() {
         todos = JSON.parse(localStorage.getItem('offline_todos')) || [];
         mors = JSON.parse(localStorage.getItem('offline_mors')) || [];
+        vendors = JSON.parse(localStorage.getItem('offline_vendors')) || [];
+        units = JSON.parse(localStorage.getItem('offline_units')) || [];
         document.getElementById('general-notepad').value = localStorage.getItem('backup_notepad_todo') || '';
         document.getElementById('mor-notepad').value = localStorage.getItem('backup_notepad_mor') || '';
         renderTodos();
         renderMors();
+        renderVendors(currentVendorPage);
+        renderUnits(currentUnitPage);
     }
 
     function clearFilter(type) {
@@ -594,12 +764,21 @@
             document.getElementById('todo-search-name').value = '';
             document.getElementById('todo-search-date').value = '';
             renderTodos();
-        } else {
+        } else if (type === 'mor') {
             document.getElementById('mor-search-name').value = '';
             document.getElementById('mor-search-date').value = '';
             document.getElementById('mor-search-unit').value = '';
             document.getElementById('mor-search-type').value = '';
             renderMors();
+        } else if (type === 'vendor') {
+            document.getElementById('vendor-search-code').value = '';
+            document.getElementById('vendor-search-name').value = '';
+            renderVendors(1);
+        } else if (type === 'unit') {
+            document.getElementById('unit-search-name').value = '';
+            document.getElementById('unit-search-type').value = '';
+            document.getElementById('unit-search-address').value = '';
+            renderUnits(1);
         }
     }
 
@@ -699,10 +878,10 @@
                 <div class="todo-content">
                     <span class="todo-text ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
                     ${todo.remark ? `<span class="todo-remark">${todo.remark}</span>` : ''}
-                   <div class="todo-time-info">
-    <span>Buat: ${todo.createdDateStr}</span>
-    <span>${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</span>
-</div>
+                    <div class="todo-time-info">
+                        <span>Buat: ${todo.createdDateStr}</span>
+                        <span>${todo.completed ? 'Selesai: ' + todo.completedTimeStr : 'Belum'}</span>
+                    </div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                     ${todo.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
@@ -827,10 +1006,10 @@
                         <span class="meta-tag">${mor.unit}</span>
                     </div>
                     ${mor.remark ? `<span class="todo-remark">${mor.remark}</span>` : ''}
-                   <div class="todo-time-info">
-    <span>Buat: ${mor.createdDateStr}</span>
-    <span>${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</span>
-</div>
+                    <div class="todo-time-info">
+                        <span>Buat: ${mor.createdDateStr}</span>
+                        <span>${mor.completed ? 'Selesai: ' + mor.completedTimeStr : 'Belum'}</span>
+                    </div>
                     ${isOverdue ? `<span class="badge-overdue">⚠️ Overdue (>24j)</span>` : ''}
                     ${mor.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
                 </div>
@@ -859,6 +1038,225 @@
         if(cCompletedHist===0) historyCompletedList.innerHTML = '<p class="empty-message">Kosong</p>';
     }
 
+    /* ==================== VENDOR FUNCTIONS ==================== */
+    function addVendor() {
+        const codeInput = document.getElementById('vendor-code-input');
+        const nameInput = document.getElementById('vendor-name-input');
+        
+        if (codeInput.value.trim() === '' || nameInput.value.trim() === '') {
+            return alert('Harap isi Kode Vendor dan Nama Vendor!');
+        }
+
+        vendors.push({
+            id: Date.now(),
+            code: codeInput.value.trim().toUpperCase(),
+            name: nameInput.value.trim().toUpperCase(),
+            type: 'VENDOR',
+            unsynced: !navigator.onLine
+        });
+
+        codeInput.value = '';
+        nameInput.value = '';
+        syncAllToSheets();
+    }
+
+    function deleteVendor(id) {
+        if (confirm("Hapus Vendor ini?")) {
+            vendors = vendors.filter(v => v.id !== id);
+            syncAllToSheets();
+        }
+    }
+
+    function editVendor(id) {
+        const item = vendors.find(v => v.id === id);
+        const nCode = prompt("Edit Kode Vendor:", item.code);
+        if (!nCode || nCode.trim() === '') return;
+        const nName = prompt("Edit Nama Vendor:", item.name);
+        if (!nName || nName.trim() === '') return;
+
+        vendors = vendors.map(v => v.id === id ? { 
+            ...v, 
+            code: nCode.trim().toUpperCase(), 
+            name: nName.trim().toUpperCase(), 
+            unsynced: !navigator.onLine 
+        } : v);
+        syncAllToSheets();
+    }
+
+    function renderVendors(page = 1) {
+        currentVendorPage = page;
+        const vendorList = document.getElementById('vendor-list');
+        const paginationContainer = document.getElementById('vendor-pagination');
+        vendorList.innerHTML = '';
+        paginationContainer.innerHTML = '';
+
+        const queryCode = document.getElementById('vendor-search-code').value.trim().toUpperCase();
+        const queryName = document.getElementById('vendor-search-name').value.trim().toUpperCase();
+
+        const filteredVendors = vendors.filter(v => {
+            if (queryCode && !v.code.includes(queryCode)) return false;
+            if (queryName && !v.name.includes(queryName)) return false;
+            return true;
+        });
+
+        const totalItems = filteredVendors.length;
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+        if (page > totalPages) currentVendorPage = totalPages;
+
+        const startIndex = (currentVendorPage - 1) * ITEMS_PER_PAGE;
+        const pageItems = filteredVendors.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+        pageItems.forEach(v => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="todo-content">
+                    <span class="todo-text">${v.code} - ${v.name}</span>
+                    ${v.unsynced ? `<div style="margin-top:2px;"><span class="badge-unsynced">Lokal</span></div>` : ''}
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn edit-btn" onclick="editVendor(${v.id})">📝</button>
+                    <button class="action-btn delete-btn" onclick="deleteVendor(${v.id})">🗑️</button>
+                </div>
+            `;
+            vendorList.appendChild(li);
+        });
+
+        if (totalItems === 0) {
+            vendorList.innerHTML = '<p class="empty-message">Data Vendor tidak ditemukan / kosong.</p>';
+            return;
+        }
+
+        // Render Tombol Halaman (Pagination)
+        if (totalPages > 1) {
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentVendorPage ? 'active' : ''}`;
+                btn.innerText = ` ${i}`;
+                btn.onclick = () => renderVendors(i);
+                paginationContainer.appendChild(btn);
+            }
+        }
+    }
+
+    /* ==================== UNIT FARM & HATCHERY FUNCTIONS ==================== */
+    function addUnit() {
+        const nameInput = document.getElementById('unit-name-input');
+        const typeInput = document.getElementById('unit-type-input');
+        const addressInput = document.getElementById('unit-address-input');
+
+        if (nameInput.value.trim() === '') return alert('Isi Nama Unit!');
+
+        units.push({
+            id: Date.now(),
+            name: nameInput.value.trim().toUpperCase(),
+            unitType: typeInput.value,
+            address: addressInput.value.trim().toUpperCase(),
+            type: 'UNIT',
+            unsynced: !navigator.onLine
+        });
+
+        nameInput.value = '';
+        addressInput.value = '';
+        syncAllToSheets();
+    }
+
+    function deleteUnit(id) {
+        if (confirm("Hapus Unit ini?")) {
+            units = units.filter(u => u.id !== id);
+            syncAllToSheets();
+        }
+    }
+
+    function editUnit(id) {
+        const item = units.find(u => u.id === id);
+        const nName = prompt("Edit Nama Unit:", item.name);
+        if (!nName || nName.trim() === '') return;
+        const nAddress = prompt("Edit Alamat Unit:", item.address || '');
+
+        units = units.map(u => u.id === id ? { 
+            ...u, 
+            name: nName.trim().toUpperCase(), 
+            address: nAddress ? nAddress.trim().toUpperCase() : '',
+            unsynced: !navigator.onLine 
+        } : u);
+        syncAllToSheets();
+    }
+
+    function copyAddressToClipboard(addressText) {
+        if (!addressText) return alert("Alamat kosong!");
+        navigator.clipboard.writeText(addressText).then(() => {
+            alert("📍 Alamat berhasil disalin ke clipboard!");
+        });
+    }
+
+    function renderUnits(page = 1) {
+        currentUnitPage = page;
+        const unitList = document.getElementById('unit-list');
+        const paginationContainer = document.getElementById('unit-pagination');
+        unitList.innerHTML = '';
+        paginationContainer.innerHTML = '';
+
+        const queryName = document.getElementById('unit-search-name').value.trim().toUpperCase();
+        const queryType = document.getElementById('unit-search-type').value;
+        const queryAddress = document.getElementById('unit-search-address').value.trim().toUpperCase();
+
+        const filteredUnits = units.filter(u => {
+            const unitAddress = u.address || '';
+            if (queryName && !u.name.includes(queryName)) return false;
+            if (queryType && u.unitType !== queryType) return false;
+            if (queryAddress && !unitAddress.includes(queryAddress)) return false;
+            return true;
+        });
+
+        const totalItems = filteredUnits.length;
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+        if (page > totalPages) currentUnitPage = totalPages;
+
+        const startIndex = (currentUnitPage - 1) * ITEMS_PER_PAGE;
+        const pageItems = filteredUnits.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+        pageItems.forEach(u => {
+            const unitAddress = u.address || '';
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="todo-content">
+                    <span class="todo-text">${u.name}</span>
+                    <div style="margin-top:2px;">
+                        <span class="meta-tag" style="background:#dcfce7; color:#15803d;">Jenis: ${u.unitType}</span>
+                        ${u.unsynced ? `<span class="badge-unsynced">Lokal</span>` : ''}
+                    </div>
+                    ${unitAddress ? `
+                        <div class="unit-address-box">
+                            <span>📍 ${unitAddress}</span>
+                            <button class="copy-addr-btn" onclick="copyAddressToClipboard('${unitAddress.replace(/'/g, "\\'")}')">📋 Salin Alamat</button>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn edit-btn" onclick="editUnit(${u.id})">📝</button>
+                    <button class="action-btn delete-btn" onclick="deleteUnit(${u.id})">🗑️</button>
+                </div>
+            `;
+            unitList.appendChild(li);
+        });
+
+        if (totalItems === 0) {
+            unitList.innerHTML = '<p class="empty-message">Data Unit tidak ditemukan / kosong.</p>';
+            return;
+        }
+
+        // Render Tombol Halaman (Pagination)
+        if (totalPages > 1) {
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentUnitPage ? 'active' : ''}`;
+                btn.innerText = `Halaman ${i}`;
+                btn.onclick = () => renderUnits(i);
+                paginationContainer.appendChild(btn);
+            }
+        }
+    }
+
     /* ==================== FORMAT SHARING DINAMIS ==================== */
     function buildTextString(type) {
         const todayStr = getFormattedDate(new Date());
@@ -874,7 +1272,7 @@
                 const textWithRemark = (!t.completed && t.remark) ? `${t.text} ${t.remark}` : t.text;
                 res += `- ${textWithRemark} ${icon}\n`;
             });
-        } else {
+        } else if (type === 'mor') {
             const todayMors = mors.filter(m => m.createdDateStr === todayStr);
             if (todayMors.length === 0) return "";
             
@@ -904,6 +1302,8 @@
 
     document.getElementById('todo-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addTodo(); });
     document.getElementById('mor-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addMor(); });
+    document.getElementById('vendor-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addVendor(); });
+    document.getElementById('unit-name-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') addUnit(); });
 
     initDates();
     updateNetworkStatus();
