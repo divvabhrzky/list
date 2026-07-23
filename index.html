@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIPPS DASHBOARD ULTIMATE CRUD</title>
+    <title>TO DO LIST DIPPS</title>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -22,9 +22,7 @@
             --border: #e2e8f0;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -41,83 +39,46 @@
             background: rgba(255, 255, 255, 0.85);
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; font-weight: 700; color: var(--primary);
-            font-size: 16px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
-            text-align: center;
-            padding: 20px;
+            font-size: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            text-align: center; padding: 20px;
         }
 
         #network-status-badge {
-            position: fixed;
-            bottom: 15px;
-            left: 15px;
-            padding: 8px 14px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            z-index: 9998;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            position: fixed; bottom: 15px; left: 15px;
+            padding: 8px 14px; border-radius: 30px;
+            font-size: 11px; font-weight: 700; z-index: 9998;
+            display: flex; align-items: center; gap: 6px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .status-online { background-color: var(--success-light); color: var(--success); border: 1px solid rgba(22, 163, 74, 0.3); }
         .status-offline { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.3); animation: pulse 1.5s infinite; }
 
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
+        @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
 
         .top-navbar {
-            max-width: 1400px;
-            margin: 0 auto 16px auto;
-            background: var(--card-bg);
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            border: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 10px;
+            max-width: 1400px; margin: 0 auto 16px auto;
+            background: var(--card-bg); padding: 12px;
+            border-radius: 12px; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
         }
 
         .tab-btn-group { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
 
         .tab-btn {
-            flex: 1 1 auto;
-            background-color: #f1f5f9;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            padding: 10px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            white-space: nowrap;
+            flex: 1 1 auto; background-color: #f1f5f9; color: var(--text-muted);
+            border: 1px solid var(--border); padding: 10px 14px;
+            font-size: 12px; font-weight: 700; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s ease; text-align: center; white-space: nowrap;
         }
 
-        .tab-btn.active {
-            background-color: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-        }
-
+        .tab-btn.active { background-color: var(--primary); color: #ffffff; border-color: var(--primary); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Dashboard Layout Responsif */
         .dashboard-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            max-width: 1400px;
-            margin: 0 auto;
+            display: grid; grid-template-columns: 1fr; gap: 16px;
+            max-width: 1400px; margin: 0 auto;
         }
 
         @media (min-width: 992px) {
@@ -128,97 +89,38 @@
         }
 
         .card {
-            background-color: var(--card-bg);
-            padding: 16px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            background-color: var(--card-bg); padding: 16px;
+            border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px;
         }
 
-        @media (min-width: 768px) {
-            .card { padding: 24px; gap: 16px; }
-        }
+        @media (min-width: 768px) { .card { padding: 24px; gap: 16px; } }
 
         .left-column { display: flex; flex-direction: column; gap: 16px; }
-        
         h2 { margin: 0; font-size: 18px; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .date-header { color: var(--primary); font-weight: 600; font-size: 13px; margin-top: -6px; }
 
-        .progress-container {
-            background: #f8fafc; 
-            padding: 12px; 
-            border-radius: 10px; 
-            border: 1px solid var(--border);
-        }
-        .progress-label { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            font-size: 12px; 
-            margin-bottom: 8px; 
-            font-weight: 700; 
-            color: #334155; 
-        }
-        .progress-badge {
-            background: var(--primary-light);
-            color: var(--primary);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 11px;
-        }
-        .progress-bar-bg { 
-            background: #e2e8f0; 
-            height: 12px; 
-            border-radius: 30px; 
-            overflow: hidden; 
-            position: relative;
-        }
+        .progress-container { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .progress-label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 8px; font-weight: 700; color: #334155; }
+        .progress-badge { background: var(--primary-light); color: var(--primary); padding: 2px 6px; border-radius: 6px; font-size: 11px; }
+        .progress-bar-bg { background: #e2e8f0; height: 12px; border-radius: 30px; overflow: hidden; position: relative; }
         .progress-bar-fill { 
             background-color: #10b981;
-            background-image: linear-gradient(
-                45deg,
-                rgba(255, 255, 255, 0.2) 25%,
-                transparent 25%,
-                transparent 50%,
-                rgba(255, 255, 255, 0.2) 50%,
-                rgba(255, 255, 255, 0.2) 75%,
-                transparent 75%,
-                transparent
-            );
-            background-size: 30px 30px;
-            height: 100%; 
-            width: 0%; 
-            border-radius: 30px;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-            animation: progress-bar-stripes 1s linear infinite;
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+            background-size: 30px 30px; height: 100%; width: 0%; border-radius: 30px; transition: width 0.5s ease; animation: progress-bar-stripes 1s linear infinite;
         }
-
-        @keyframes progress-bar-stripes {
-            0% { background-position: 0 0; }
-            100% { background-position: 30px 0; }
-        }
+        @keyframes progress-bar-stripes { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
 
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .select-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
-
-        @media (min-width: 480px) {
-            .select-row { grid-template-columns: 1fr 1fr; }
-        }
+        @media (min-width: 480px) { .select-row { grid-template-columns: 1fr 1fr; } }
 
         label { font-size: 11px; font-weight: 600; color: #475569; margin-bottom: -4px; }
 
         input[type="text"], select, textarea, input[type="date"] {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border);
-            color: var(--text-color);
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            width: 100%;
-            transition: all 0.2s ease;
+            background-color: var(--input-bg); border: 1px solid var(--border);
+            color: var(--text-color); padding: 10px 12px; border-radius: 6px;
+            font-size: 13px; width: 100%; transition: all 0.2s ease;
         }
         input[type="text"]:focus, select:focus, textarea:focus, input[type="date"]:focus {
             outline: none; border-color: var(--primary); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
@@ -242,42 +144,25 @@
         textarea { height: 110px; resize: none; font-family: inherit; }
 
         .right-column { display: grid; grid-template-columns: 1fr; gap: 12px; align-content: start; }
-        
-        @media (min-width: 640px) {
-            .right-column { grid-template-columns: 1fr 1fr; gap: 16px; }
-        }
+        @media (min-width: 640px) { .right-column { grid-template-columns: 1fr 1fr; gap: 16px; } }
 
         .full-width-column { display: flex; flex-direction: column; gap: 16px; grid-column: span 1; }
-        
-        @media (min-width: 640px) {
-            .full-width-column { grid-column: span 2; }
-        }
+        @media (min-width: 640px) { .full-width-column { grid-column: span 2; } }
 
         .search-filter-box {
             background-color: #f8fafc; padding: 12px; border-radius: 8px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;
-            grid-column: span 1;
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; grid-column: span 1;
         }
-
-        @media (min-width: 640px) {
-            .search-filter-box { grid-column: span 2; padding: 16px; }
-        }
+        @media (min-width: 640px) { .search-filter-box { grid-column: span 2; padding: 16px; } }
 
         .search-filter-title { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .search-filter-inputs, .search-filter-inputs-mor, .search-filter-inputs-unit {
-            display: grid; grid-template-columns: 1fr; gap: 8px;
-        }
+        .search-filter-inputs, .search-filter-inputs-mor, .search-filter-inputs-unit { display: grid; grid-template-columns: 1fr; gap: 8px; }
 
         @media (min-width: 480px) {
-            .search-filter-inputs { grid-template-columns: 1fr 1fr; }
-            .search-filter-inputs-mor { grid-template-columns: 1fr 1fr; }
-            .search-filter-inputs-unit { grid-template-columns: 1fr 1fr; }
+            .search-filter-inputs, .search-filter-inputs-mor, .search-filter-inputs-unit { grid-template-columns: 1fr 1fr; }
         }
-
         @media (min-width: 768px) {
-            .search-filter-inputs-mor { grid-template-columns: 1fr 1fr 1fr; }
-            .search-filter-inputs-unit { grid-template-columns: 1fr 1fr 1fr; }
+            .search-filter-inputs-mor, .search-filter-inputs-unit { grid-template-columns: 1fr 1fr 1fr; }
         }
 
         .list-section { background: var(--card-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border); min-height: 120px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
@@ -299,49 +184,20 @@
         .todo-remark { font-size: 10px; color: #b45309; font-weight: 500; }
         
         .unit-address-box {
-            margin-top: 6px;
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 6px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            word-break: break-word;
+            margin-top: 6px; background: #ffffff; border: 1px solid var(--border);
+            padding: 6px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #1e293b;
+            display: flex; flex-direction: column; gap: 6px; word-break: break-word;
         }
-
-        @media (min-width: 480px) {
-            .unit-address-box { flex-direction: row; align-items: center; justify-content: space-between; }
-        }
+        @media (min-width: 480px) { .unit-address-box { flex-direction: row; align-items: center; justify-content: space-between; } }
 
         .copy-addr-btn {
-            background: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s;
-            align-self: flex-start;
+            background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;
+            border-radius: 4px; padding: 4px 8px; font-size: 10px; font-weight: 700;
+            cursor: pointer; white-space: nowrap; transition: all 0.2s; align-self: flex-start;
         }
-        @media (min-width: 480px) {
-            .copy-addr-btn { align-self: auto; }
-        }
+        @media (min-width: 480px) { .copy-addr-btn { align-self: auto; } }
 
-        .todo-time-info { 
-            font-size: 9px; 
-            color: var(--text-muted); 
-            margin-top: 2px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 2px;
-        }
+        .todo-time-info { font-size: 9px; color: var(--text-muted); margin-top: 2px; display: flex; flex-direction: column; gap: 2px; }
         
         .badge-overdue { background-color: var(--danger-light); color: var(--danger); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
         .badge-unsynced { background-color: var(--warning-light); color: var(--warning); font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; width: fit-content; margin-top: 2px; }
@@ -353,30 +209,47 @@
         .delete-btn { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.2); }
         .empty-message { color: var(--text-muted); font-style: italic; font-size: 11px; margin: 2px 0; }
 
-        /* Styling Pagination Responsif */
         .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed var(--border);
-            flex-wrap: wrap;
+            display: flex; justify-content: center; align-items: center; gap: 4px;
+            margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); flex-wrap: wrap;
         }
         .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            color: var(--text-color);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            background: #ffffff; border: 1px solid var(--border); color: var(--text-color);
+            padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease;
         }
         .page-btn:hover { background: var(--primary-light); color: var(--primary); }
         .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Styling Kalender Interaktif */
+        .calendar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; gap: 8px;
+        }
+        .calendar-nav-btn {
+            background: var(--input-bg); border: 1px solid var(--border);
+            padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer;
+        }
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;
+        }
+        .calendar-day-head {
+            font-size: 11px; font-weight: 700; color: var(--text-muted); padding: 6px 0; background: #f1f5f9; border-radius: 4px;
+        }
+        .calendar-day-cell {
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 6px; min-height: 55px; padding: 4px; cursor: pointer;
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: all 0.2s; position: relative;
+        }
+        .calendar-day-cell:hover { background: var(--primary-light); border-color: var(--primary); }
+        .calendar-day-cell.today { border: 2px solid var(--primary); background: #ffffff; }
+        .calendar-day-num { font-size: 12px; font-weight: 700; color: #0f172a; text-align: left; }
+        .calendar-note-dot {
+            font-size: 9px; background: var(--warning-light); color: var(--warning);
+            border: 1px solid rgba(217, 119, 6, 0.3); padding: 1px 3px; border-radius: 3px;
+            font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
+        }
     </style>
 </head>
 <body>
@@ -390,6 +263,7 @@
         <button class="tab-btn" onclick="switchTab('mor-panel', this)">📋 DAFTAR MOR</button>
         <button class="tab-btn" onclick="switchTab('vendor-panel', this)">🏭 VENDOR</button>
         <button class="tab-btn" onclick="switchTab('unit-panel', this)">🐥 UNIT FARM</button>
+        <button class="tab-btn" onclick="switchTab('calendar-panel', this)">📆 KALENDER NOTE</button>
     </div>
     <button class="btn btn-secondary" style="width: 100%; margin-top: 4px;" onclick="fetchAllFromSheets()">🔄 Sinkronisasi Data</button>
 </div>
@@ -399,7 +273,7 @@
     <div class="dashboard-layout">
         <div class="left-column">
             <div class="card">
-                <h2>📅 To-Do List Dashboard</h2>
+                <h2>📅 To-Do List</h2>
                 <div class="date-header class-date-display">-- - -- - ----</div>
                 
                 <div class="progress-container">
@@ -645,19 +519,60 @@
     </div>
 </div>
 
+<!-- TAB 5: KALENDER NOTE INTERAKTIF -->
+<div id="calendar-panel" class="tab-content">
+    <div class="dashboard-layout">
+        <div class="left-column">
+            <div class="card">
+                <h2>📆 Detail Catatan Tanggal</h2>
+                <div id="selected-date-title" class="date-header">Pilih tanggal pada kalender...</div>
+                <div class="input-group">
+                    <label>Isi Catatan Agenda / Reminder</label>
+                    <textarea id="calendar-note-input" style="height: 120px;" placeholder="Klik salah satu tanggal pada kalender di samping untuk menulis catatan..."></textarea>
+                    <button class="btn btn-primary" onclick="saveCalendarNote()">💾 Simpan Note Tanggal</button>
+                </div>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="card full-width-column">
+                <div class="calendar-header">
+                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">◀ Bulan Lalu</button>
+                    <h2 id="calendar-month-year" style="font-size: 16px;">Bulan 2026</h2>
+                    <button class="calendar-nav-btn" onclick="changeMonth(1)">Bulan Depan ▶</button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-day-head">Min</div>
+                    <div class="calendar-day-head">Sen</div>
+                    <div class="calendar-day-head">Sel</div>
+                    <div class="calendar-day-head">Rab</div>
+                    <div class="calendar-day-head">Kam</div>
+                    <div class="calendar-day-head">Jum</div>
+                    <div class="calendar-day-head">Sab</div>
+                </div>
+                <div id="calendar-days-container" class="calendar-grid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwj5zj79MFyvfdQMJdUCuF3gqyIwhT-0uh-3vT0SkOk_Oxa_wfA4oUhkrpw8FgifB8uWA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxlof8hg7h_7I80ykdtipNm97CyrO-Y1b_OmfxWxGAuyPStJjC8q4pBXa-0nO9Ugcywxw/exec";
 
     let todos = [];
     let mors = [];
     let vendors = [];
     let units = [];
+    let calendarNotes = {};
     let isOfflineMode = false;
 
-    // Konfigurasi Halaman (Limit 15 Item per Halaman)
+    // Limit Pagination
     const ITEMS_PER_PAGE = 15;
     let currentVendorPage = 1;
     let currentUnitPage = 1;
+
+    // State Kalender
+    let currCalDate = new Date();
+    let selectedCalDateStr = "";
 
     function showLoading(show) {
         document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
@@ -706,6 +621,10 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(panelId).classList.add('active');
         btn.classList.add('active');
+
+        if (panelId === 'calendar-panel') {
+            renderCalendar();
+        }
     }
 
     // ==================== ENGINE CORE CRUD SYSTEM ====================
@@ -721,11 +640,15 @@
             .then(data => {
                 const fetchedList = data.todos || [];
                 const fetchedNotepads = data.notepads || {};
+                const fetchedCalNotes = data.calendarNotes || {};
 
                 todos = fetchedList.filter(item => item.type === "TODO");
-                mors = fetchedList.filter(item => item.type !== "TODO" && item.type !== "notepad" && item.type !== "VENDOR" && item.type !== "UNIT");
+                mors = fetchedList.filter(item => item.type !== "TODO" && item.type !== "notepad" && item.type !== "VENDOR" && item.type !== "UNIT" && item.type !== "CALENDAR_NOTE");
                 vendors = fetchedList.filter(item => item.type === "VENDOR");
                 units = fetchedList.filter(item => item.type === "UNIT");
+
+                let localCal = JSON.parse(localStorage.getItem('offline_cal_notes')) || {};
+                calendarNotes = Object.keys(fetchedCalNotes).length > 0 ? fetchedCalNotes : localCal;
 
                 document.getElementById('general-notepad').value = fetchedNotepads['todo'] || '';
                 document.getElementById('mor-notepad').value = fetchedNotepads['mor'] || '';
@@ -735,6 +658,7 @@
                 renderMors();
                 renderVendors(currentVendorPage);
                 renderUnits(currentUnitPage);
+                renderCalendar();
                 showLoading(false);
             })
             .catch(err => {
@@ -746,22 +670,28 @@
     function syncAllToSheets() {
         saveToLocalStorageBackup();
         if (!navigator.onLine) {
-            renderTodos();
-            renderMors();
-            renderVendors(currentVendorPage);
-            renderUnits(currentUnitPage);
+            renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar();
             return;
         }
         
         showLoading(true);
-        const combinedList = [...todos, ...mors, ...vendors, ...units];
+
+        let calArray = [];
+        for (let dateKey in calendarNotes) {
+            calArray.push({
+                id: "CAL_" + dateKey.replace(/-/g, ""),
+                dateKey: dateKey,
+                note: calendarNotes[dateKey],
+                type: "CALENDAR_NOTE",
+                timestamp: new Date(dateKey).getTime()
+            });
+        }
+
+        const combinedList = [...todos, ...mors, ...vendors, ...units, ...calArray];
         
         fetch(API_URL, {
             method: 'POST',
-            body: JSON.stringify({
-                action: "syncAll",
-                listData: combinedList
-            })
+            body: JSON.stringify({ action: "syncAll", listData: combinedList })
         })
         .then(res => res.json())
         .then(result => {
@@ -771,14 +701,9 @@
             units.forEach(u => u.unsynced = false);
             saveToLocalStorageBackup();
             showLoading(false);
-            renderTodos();
-            renderMors();
-            renderVendors(currentVendorPage);
-            renderUnits(currentUnitPage);
+            renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar();
         })
-        .catch(err => {
-            showLoading(false);
-        });
+        .catch(err => { showLoading(false); });
     }
 
     function saveNotepad(type) {
@@ -799,6 +724,7 @@
         localStorage.setItem('offline_mors', JSON.stringify(mors));
         localStorage.setItem('offline_vendors', JSON.stringify(vendors));
         localStorage.setItem('offline_units', JSON.stringify(units));
+        localStorage.setItem('offline_cal_notes', JSON.stringify(calendarNotes));
     }
 
     function loadFromLocalStorageBackup() {
@@ -806,12 +732,10 @@
         mors = JSON.parse(localStorage.getItem('offline_mors')) || [];
         vendors = JSON.parse(localStorage.getItem('offline_vendors')) || [];
         units = JSON.parse(localStorage.getItem('offline_units')) || [];
+        calendarNotes = JSON.parse(localStorage.getItem('offline_cal_notes')) || {};
         document.getElementById('general-notepad').value = localStorage.getItem('backup_notepad_todo') || '';
         document.getElementById('mor-notepad').value = localStorage.getItem('backup_notepad_mor') || '';
-        renderTodos();
-        renderMors();
-        renderVendors(currentVendorPage);
-        renderUnits(currentUnitPage);
+        renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar();
     }
 
     function clearFilter(type) {
@@ -1110,8 +1034,7 @@
             unsynced: !navigator.onLine
         });
 
-        codeInput.value = '';
-        nameInput.value = '';
+        codeInput.value = ''; nameInput.value = '';
         syncAllToSheets();
     }
 
@@ -1129,12 +1052,7 @@
         const nName = prompt("Edit Nama Vendor:", item.name);
         if (!nName || nName.trim() === '') return;
 
-        vendors = vendors.map(v => v.id === id ? { 
-            ...v, 
-            code: nCode.trim().toUpperCase(), 
-            name: nName.trim().toUpperCase(), 
-            unsynced: !navigator.onLine 
-        } : v);
+        vendors = vendors.map(v => v.id === id ? { ...v, code: nCode.trim().toUpperCase(), name: nName.trim().toUpperCase(), unsynced: !navigator.onLine } : v);
         syncAllToSheets();
     }
 
@@ -1142,8 +1060,7 @@
         currentVendorPage = page;
         const vendorList = document.getElementById('vendor-list');
         const paginationContainer = document.getElementById('vendor-pagination');
-        vendorList.innerHTML = '';
-        paginationContainer.innerHTML = '';
+        vendorList.innerHTML = ''; paginationContainer.innerHTML = '';
 
         const queryCode = document.getElementById('vendor-search-code').value.trim().toUpperCase();
         const queryName = document.getElementById('vendor-search-name').value.trim().toUpperCase();
@@ -1181,12 +1098,11 @@
             return;
         }
 
-        // Render Tombol Halaman (Pagination)
         if (totalPages > 1) {
             for (let i = 1; i <= totalPages; i++) {
                 const btn = document.createElement('button');
                 btn.className = `page-btn ${i === currentVendorPage ? 'active' : ''}`;
-                btn.innerText = ` ${i}`;
+                btn.innerText = `Hal ${i}`;
                 btn.onclick = () => renderVendors(i);
                 paginationContainer.appendChild(btn);
             }
@@ -1210,8 +1126,7 @@
             unsynced: !navigator.onLine
         });
 
-        nameInput.value = '';
-        addressInput.value = '';
+        nameInput.value = ''; addressInput.value = '';
         syncAllToSheets();
     }
 
@@ -1229,10 +1144,7 @@
         const nAddress = prompt("Edit Alamat Unit:", item.address || '');
 
         units = units.map(u => u.id === id ? { 
-            ...u, 
-            name: nName.trim().toUpperCase(), 
-            address: nAddress ? nAddress.trim().toUpperCase() : '',
-            unsynced: !navigator.onLine 
+            ...u, name: nName.trim().toUpperCase(), address: nAddress ? nAddress.trim().toUpperCase() : '', unsynced: !navigator.onLine 
         } : u);
         syncAllToSheets();
     }
@@ -1248,8 +1160,7 @@
         currentUnitPage = page;
         const unitList = document.getElementById('unit-list');
         const paginationContainer = document.getElementById('unit-pagination');
-        unitList.innerHTML = '';
-        paginationContainer.innerHTML = '';
+        unitList.innerHTML = ''; paginationContainer.innerHTML = '';
 
         const queryName = document.getElementById('unit-search-name').value.trim().toUpperCase();
         const queryType = document.getElementById('unit-search-type').value;
@@ -1300,7 +1211,6 @@
             return;
         }
 
-        // Render Tombol Halaman (Pagination)
         if (totalPages > 1) {
             for (let i = 1; i <= totalPages; i++) {
                 const btn = document.createElement('button');
@@ -1309,6 +1219,74 @@
                 btn.onclick = () => renderUnits(i);
                 paginationContainer.appendChild(btn);
             }
+        }
+    }
+
+    /* ==================== KALENDER NOTE FUNCTIONS ==================== */
+    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    function changeMonth(delta) {
+        currCalDate.setMonth(currCalDate.getMonth() + delta);
+        renderCalendar();
+    }
+
+    function selectCalendarDate(dateKey, displayStr) {
+        selectedCalDateStr = dateKey;
+        document.getElementById('selected-date-title').innerText = `Catatan Tanggal: ${displayStr}`;
+        document.getElementById('calendar-note-input').value = calendarNotes[dateKey] || '';
+    }
+
+    function saveCalendarNote() {
+        if (!selectedCalDateStr) return alert("Pilih tanggal pada kalender terlebih dahulu!");
+        const noteVal = document.getElementById('calendar-note-input').value.trim();
+        if (noteVal) {
+            calendarNotes[selectedCalDateStr] = noteVal;
+        } else {
+            delete calendarNotes[selectedCalDateStr];
+        }
+        
+        syncAllToSheets();
+        renderCalendar();
+        alert("Catatan tanggal berhasil disimpan dan disinkronkan ke Database!");
+    }
+
+    function renderCalendar() {
+        const container = document.getElementById('calendar-days-container');
+        if(!container) return;
+        container.innerHTML = '';
+
+        const year = currCalDate.getFullYear();
+        const month = currCalDate.getMonth();
+
+        document.getElementById('calendar-month-year').innerText = `${monthNames[month]} ${year}`;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const todayObj = new Date();
+        const todayKey = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.style.background = "transparent";
+            container.appendChild(emptyDiv);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const displayStr = `${day} ${monthNames[month]} ${year}`;
+
+            const cell = document.createElement('div');
+            cell.className = `calendar-day-cell ${dateKey === todayKey ? 'today' : ''}`;
+            cell.onclick = () => selectCalendarDate(dateKey, displayStr);
+
+            const hasNote = calendarNotes[dateKey];
+
+            cell.innerHTML = `
+                <div class="calendar-day-num">${day}</div>
+                ${hasNote ? `<div class="calendar-note-dot">• ${hasNote}</div>` : ''}
+            `;
+            container.appendChild(cell);
         }
     }
 
