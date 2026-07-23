@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TO DO LIST DIPPS</title>
+    <title>To Do List Dipps</title>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -110,6 +110,34 @@
             background-size: 30px 30px; height: 100%; width: 0%; border-radius: 30px; transition: width 0.5s ease; animation: progress-bar-stripes 1s linear infinite;
         }
         @keyframes progress-bar-stripes { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* Banner & Widget Reminder Kalender */
+        .calendar-reminder-banner {
+            background-color: var(--warning-light);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+            border-left: 5px solid var(--warning);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: fadeIn 0.4s ease;
+        }
+        .calendar-reminder-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .calendar-reminder-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #78350f;
+            white-space: pre-line;
+            line-height: 1.4;
+        }
 
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .select-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -273,8 +301,14 @@
     <div class="dashboard-layout">
         <div class="left-column">
             <div class="card">
-                <h2>📅 To-Do List</h2>
+                <h2>📅 To-Do List Dashboard</h2>
                 <div class="date-header class-date-display">-- - -- - ----</div>
+
+                <!-- WIDGET REMINDER PERINGATAN KALENDER HARI INI -->
+                <div id="todo-calendar-reminder" class="calendar-reminder-banner">
+                    <div class="calendar-reminder-title">🔔 REMINDER KALENDER HARI INI</div>
+                    <div id="todo-calendar-reminder-text" class="calendar-reminder-text">(Memuat data kalender...)</div>
+                </div>
                 
                 <div class="progress-container">
                     <div class="progress-label">
@@ -556,7 +590,7 @@
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxlof8hg7h_7I80ykdtipNm97CyrO-Y1b_OmfxWxGAuyPStJjC8q4pBXa-0nO9Ugcywxw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzVCboqWGYqFjkV7Ec6oRu68qKxlIoSyWLrU6nSFkfzF8nItL0694MvXir_3VTDDcd9/exec";
 
     let todos = [];
     let mors = [];
@@ -627,6 +661,24 @@
         }
     }
 
+    // UPDATE WIDGET REMINDER KALENDER PADA DASHBOARD TO DO
+    function updateTodayCalendarReminder() {
+        const todayObj = new Date();
+        const year = todayObj.getFullYear();
+        const monthStr = String(todayObj.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(todayObj.getDate()).padStart(2, '0');
+        const todayKey = `${year}-${monthStr}-${dayStr}`;
+
+        const reminderTextEl = document.getElementById('todo-calendar-reminder-text');
+        const noteToday = calendarNotes[todayKey];
+
+        if (noteToday) {
+            reminderTextEl.innerHTML = `⚠️ <b>PERINGATAN AGENDA:</b><br>${noteToday}`;
+        } else {
+            reminderTextEl.innerText = "(Tidak ada catatan agenda kalender untuk hari ini)";
+        }
+    }
+
     // ==================== ENGINE CORE CRUD SYSTEM ====================
     
     function fetchAllFromSheets() {
@@ -647,8 +699,7 @@
                 vendors = fetchedList.filter(item => item.type === "VENDOR");
                 units = fetchedList.filter(item => item.type === "UNIT");
 
-                let localCal = JSON.parse(localStorage.getItem('offline_cal_notes')) || {};
-                calendarNotes = Object.keys(fetchedCalNotes).length > 0 ? fetchedCalNotes : localCal;
+                calendarNotes = fetchedCalNotes;
 
                 document.getElementById('general-notepad').value = fetchedNotepads['todo'] || '';
                 document.getElementById('mor-notepad').value = fetchedNotepads['mor'] || '';
@@ -659,6 +710,7 @@
                 renderVendors(currentVendorPage);
                 renderUnits(currentUnitPage);
                 renderCalendar();
+                updateTodayCalendarReminder();
                 showLoading(false);
             })
             .catch(err => {
@@ -670,7 +722,7 @@
     function syncAllToSheets() {
         saveToLocalStorageBackup();
         if (!navigator.onLine) {
-            renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar();
+            renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar(); updateTodayCalendarReminder();
             return;
         }
         
@@ -701,7 +753,7 @@
             units.forEach(u => u.unsynced = false);
             saveToLocalStorageBackup();
             showLoading(false);
-            renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar();
+            renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar(); updateTodayCalendarReminder();
         })
         .catch(err => { showLoading(false); });
     }
@@ -735,7 +787,7 @@
         calendarNotes = JSON.parse(localStorage.getItem('offline_cal_notes')) || {};
         document.getElementById('general-notepad').value = localStorage.getItem('backup_notepad_todo') || '';
         document.getElementById('mor-notepad').value = localStorage.getItem('backup_notepad_mor') || '';
-        renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar();
+        renderTodos(); renderMors(); renderVendors(currentVendorPage); renderUnits(currentUnitPage); renderCalendar(); updateTodayCalendarReminder();
     }
 
     function clearFilter(type) {
@@ -1273,7 +1325,9 @@
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
-            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const monthStr = String(month + 1).padStart(2, '0');
+            const dayStr = String(day).padStart(2, '0');
+            const dateKey = `${year}-${monthStr}-${dayStr}`;
             const displayStr = `${day} ${monthNames[month]} ${year}`;
 
             const cell = document.createElement('div');
@@ -1284,7 +1338,7 @@
 
             cell.innerHTML = `
                 <div class="calendar-day-num">${day}</div>
-                ${hasNote ? `<div class="calendar-note-dot">• ${hasNote}</div>` : ''}
+                ${hasNote ? `<div class="calendar-note-dot" title="${hasNote}">• ${hasNote}</div>` : ''}
             `;
             container.appendChild(cell);
         }
